@@ -699,6 +699,9 @@ struct itemdb_interface {
 	bool (*is_item_usable) (struct item_data *item);
 	bool (*lookup_const) (const struct config_setting_t *it, const char *name, int *value);
 	bool (*items_identical) (const struct item *a, const struct item *b, bool stack_match);
+	void (*fill_produceinfo) (struct item *item, int char_id);
+	void (*fill_forgeinfo) (struct item *item, int char_id, int star_crumbs, int element);
+	void (*fill_petinfo) (struct item *item, int pet_id, char rename_flag);
 };
 
 #ifdef HERCULES_CORE
