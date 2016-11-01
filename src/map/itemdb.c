@@ -2145,6 +2145,39 @@ bool itemdb_is_item_usable(struct item_data *item)
 	return item->type == IT_HEALING || item->type == IT_USABLE || item->type == IT_CASH;
 }
 
+/**
+ * Checks if two items are identical.
+ *
+ * @param a           First item.
+ * @param b           Second item.
+ * @param stack_match Whether to do an exact match (i.e. stackability) check.
+ * @retval true  if the two items are identical.
+ * @retval false if the two items are different.
+ */
+bool itemdb_items_identical(const struct item *a, const struct item *b, bool stack_match)
+{
+	int i;
+
+	if (a->nameid != b->nameid
+	 || a->identify != b->identify
+	 || a->refine != b->refine
+	 || a->attribute != b->attribute)
+		return false;
+
+	if (stack_match) {
+		if (a->expire_time != b->expire_time
+		 || a->bound != b->bound
+		 || a->unique_id != b->unique_id)
+			return false;
+	}
+
+	ARR_FIND(0, MAX_SLOTS, i, a->card[i] != b->card[i]);
+	if (i != MAX_SLOTS)
+		return false;
+
+	return true;
+}
+
 /*==========================================
  * Initialize / Finalize
  *------------------------------------------*/
@@ -2435,4 +2468,5 @@ void itemdb_defaults(void) {
 	itemdb->id2combo = itemdb_id2combo;
 	itemdb->is_item_usable = itemdb_is_item_usable;
 	itemdb->lookup_const = itemdb_lookup_const;
+	itemdb->items_identical = itemdb_items_identical;
 }

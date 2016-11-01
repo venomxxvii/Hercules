@@ -120,26 +120,6 @@ int storage_storageopen(struct map_session_data *sd)
 	return 0;
 }
 
-/* helper function
- * checking if 2 item structure are identique
- */
-int compare_item(struct item *a, struct item *b)
-{
-	if( a->nameid == b->nameid &&
-		a->identify == b->identify &&
-		a->refine == b->refine &&
-		a->attribute == b->attribute &&
-		a->expire_time == b->expire_time &&
-		a->bound == b->bound &&
-		a->unique_id == b->unique_id)
-	{
-		int i;
-		for (i = 0; i < MAX_SLOTS && (a->card[i] == b->card[i]); i++);
-		return (i == MAX_SLOTS);
-	}
-	return 0;
-}
-
 /*==========================================
  * Internal add-item function.
  *------------------------------------------*/
@@ -173,13 +153,12 @@ int storage_additem(struct map_session_data* sd, struct item* item_data, int amo
 		return 1;
 	}
 
-	if( itemdb->isstackable2(data) )
-	{//Stackable
-		for( i = 0; i < MAX_STORAGE; i++ )
-		{
-			if( compare_item(&stor->items[i], item_data) )
-			{// existing items found, stack them
-				if( amount > MAX_AMOUNT - stor->items[i].amount || ( data->stack.storage && amount > data->stack.amount - stor->items[i].amount ) )
+	if (itemdb->isstackable2(data)) {
+		// Stackable
+		for (i = 0; i < MAX_STORAGE; i++) {
+			if (itemdb->items_identical(&stor->items[i], item_data, true)) {
+				// existing items found, stack them
+				if (amount > MAX_AMOUNT - stor->items[i].amount || (data->stack.storage && amount > data->stack.amount - stor->items[i].amount))
 					return 1;
 
 				stor->items[i].amount += amount;
@@ -479,11 +458,14 @@ int guild_storage_additem(struct map_session_data* sd, struct guild_storage* sto
 		return 1;
 	}
 
-	if(itemdb->isstackable2(data)){ //Stackable
-		for(i=0;i<MAX_GUILD_STORAGE;i++){
-			if(compare_item(&stor->items[i], item_data)) {
-				if( amount > MAX_AMOUNT - stor->items[i].amount || ( data->stack.guildstorage && amount > data->stack.amount - stor->items[i].amount ) )
+	if (itemdb->isstackable2(data)) {
+		// Stackable
+		for (i = 0; i < MAX_GUILD_STORAGE; i++) {
+			if (itemdb->items_identical(&stor->items[i], item_data, true)) {
+				// existing items found, stack them
+				if (amount > MAX_AMOUNT - stor->items[i].amount || (data->stack.guildstorage && amount > data->stack.amount - stor->items[i].amount))
 					return 1;
+
 				stor->items[i].amount+=amount;
 				clif->storageitemadded(sd,&stor->items[i],i,amount);
 				stor->dirty = 1;
