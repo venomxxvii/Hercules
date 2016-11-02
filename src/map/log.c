@@ -159,19 +159,34 @@ void log_branch(struct map_session_data* sd) {
 
 	logs->branch_sub(sd);
 }
-void log_pick_sub_sql(int id, int16 m, e_log_pick_type type, int amount, struct item* itm, struct item_data *data) {
+void log_pick_sub_sql(int id, int16 m, e_log_pick_type type, int amount, struct item* itm, struct item_data *data)
+{
+	StringBuf buf;
+	int i;
 	nullpo_retv(itm);
-	if( SQL_ERROR == SQL->Query(logs->mysql_handle,
-	    LOG_QUERY " INTO `%s` (`time`, `char_id`, `type`, `nameid`, `amount`, `refine`, `card0`, `card1`, `card2`, `card3`, `map`, `unique_id`) "
-	    "VALUES (NOW(), '%d', '%c', '%d', '%d', '%d', '%d', '%d', '%d', '%d', '%s', '%"PRIu64"')",
-	    logs->config.log_pick, id, logs->picktype2char(type), itm->nameid, amount, itm->refine, itm->card[0], itm->card[1], itm->card[2], itm->card[3],
-	    map->list[m].name, itm->unique_id)
-	) {
+
+	StrBuf->Init(&buf);
+	StrBuf->Printf(&buf, LOG_QUERY " INTO `%s` (`time`, `char_id`, `type`, `nameid`, `amount`, `refine`, `map`, `unique_id`", logs->config.log_pick);
+	for (i = 0; i < MAX_SLOTS; ++i)
+		StrBuf->Printf(&buf, ", `card%d`", i);
+	StrBuf->Printf(&buf, ") VALUES (NOW(), '%d', '%c', '%d', '%d', '%d', '%s', '%"PRIu64"'",
+	               id, logs->picktype2char(type), itm->nameid, amount, itm->refine, map->list[m].name, itm->unique_id);
+	for (i = 0; i < MAX_SLOTS; ++i)
+		StrBuf->Printf(&buf, ", '%d'", itm->card[i]);
+	StrBuf->AppendStr(&buf, ")");
+
+	if (SQL_ERROR == SQL->QueryStr(logs->mysql_handle, StrBuf->Value(&buf))) {
 		Sql_ShowDebug(logs->mysql_handle);
+		StrBuf->Clear(&buf);
 		return;
 	}
+
+	StrBuf->Clear(&buf);
 }
-void log_pick_sub_txt(int id, int16 m, e_log_pick_type type, int amount, struct item* itm, struct item_data *data) {
+void log_pick_sub_txt(int id, int16 m, e_log_pick_type type, int amount, struct item* itm, struct item_data *data)
+{
+	StringBuf buf;
+	int i;
 	char timestring[255];
 	time_t curtime;
 	FILE* logfp;
@@ -181,9 +196,15 @@ void log_pick_sub_txt(int id, int16 m, e_log_pick_type type, int amount, struct 
 		return;
 	time(&curtime);
 	strftime(timestring, sizeof(timestring), "%m/%d/%Y %H:%M:%S", localtime(&curtime));
-	fprintf(logfp,"%s - %d\t%c\t%d,%d,%d,%d,%d,%d,%d,%s,'%"PRIu64"'\n",
-	        timestring, id, logs->picktype2char(type), itm->nameid, amount, itm->refine, itm->card[0], itm->card[1], itm->card[2], itm->card[3],
-		map->list[m].name, itm->unique_id);
+	StrBuf->Init(&buf);
+	StrBuf->Printf(&buf, "%s - %d\t%c\t%d,%d,%d", timestring, id, logs->picktype2char(type), itm->nameid, amount, itm->refine);
+	for (i = 0; i < MAX_SLOTS; ++i)
+		StrBuf->Printf(&buf, ",%d", itm->card[i]);
+	StrBuf->Printf(&buf, ",%s,'%"PRIu64"", map->list[m].name, itm->unique_id);
+
+	fprintf(logfp,"%s\n", StrBuf->Value(&buf));
+
+	StrBuf->Clear(&buf);
 	fclose(logfp);
 }
 /// logs item transactions (generic)

@@ -7720,12 +7720,11 @@ BUILDIN(getitem) {
  *------------------------------------------*/
 BUILDIN(getitem2)
 {
-	int nameid,amount,flag = 0, offset = 0;
-	int iden,ref,attr,c1,c2,c3,c4, bound = 0;
+	int nameid, flag = 0, offset = 0, bound = 0;
 	struct map_session_data *sd;
 
 	if( !strcmp(script->getfuncname(st),"getitembound2") ) {
-		bound = script_getnum(st,11);
+		bound = script_getnum(st, MAX_SLOTS + 7);
 		if( bound < IBT_MIN || bound > IBT_MAX ) { //Not a correct bound type
 			ShowError("script_getitembound2: Not a correct bound type! Type=%d\n",bound);
 			return false;
@@ -7733,8 +7732,8 @@ BUILDIN(getitem2)
 		offset += 1;
 	}
 
-	if (script_hasdata(st,11+offset))
-		sd = script->id2sd(st, script_getnum(st,11+offset)); // <Account ID>
+	if (script_hasdata(st, 7 + MAX_SLOTS + offset))
+		sd = script->id2sd(st, script_getnum(st, 7 + MAX_SLOTS + offset)); // <Account ID>
 	else
 		sd=script->rid2sd(st); // Attached player
 
@@ -7752,56 +7751,48 @@ BUILDIN(getitem2)
 		nameid = script_getnum(st, 2);
 	}
 
-	amount=script_getnum(st,3);
-	iden=script_getnum(st,4);
-	ref=script_getnum(st,5);
-	attr=script_getnum(st,6);
-	c1=(short)script_getnum(st,7);
-	c2=(short)script_getnum(st,8);
-	c3=(short)script_getnum(st,9);
-	c4=(short)script_getnum(st,10);
-
-	if (bound && (itemdb_type(nameid) == IT_PETEGG || itemdb_type(nameid) == IT_PETARMOR)) {
-		ShowError("script_getitembound2: can't bind a pet egg/armor! Type=%d\n",bound);
-		return false;
-	}
-
 	if (nameid < 0) { // Invalide nameid
 		nameid = -nameid;
 		flag = 1;
 	}
 
 	if (nameid > 0) {
-		struct item item_tmp;
+		struct item item_tmp = { 0 };
 		struct item_data *item_data = itemdb->exists(nameid);
-		int get_count, i;
-		memset(&item_tmp,0,sizeof(item_tmp));
+		int amount, identify = 0, refine, attribute, i, get_count;
+
 		if (item_data == NULL)
 			return false;
-		if(item_data->type==IT_WEAPON || item_data->type==IT_ARMOR) {
-			ref = cap_value(ref, 0, MAX_REFINE);
-		}
-		else if(item_data->type==IT_PETEGG) {
-			iden = 1;
-			ref = 0;
-		}
-		else {
-			iden = 1;
-			ref = attr = 0;
+
+		if (bound && (itemdb_type(nameid) == IT_PETEGG || itemdb_type(nameid) == IT_PETARMOR)) {
+			ShowError("script_getitembound2: can't bind a pet egg/armor! Type=%d\n",bound);
+			return false;
 		}
 
-		item_tmp.nameid=nameid;
-		if(!flag)
-			item_tmp.identify=iden;
-		else if(item_data->type==IT_WEAPON || item_data->type==IT_ARMOR)
-			item_tmp.identify=0;
-		item_tmp.refine=ref;
-		item_tmp.attribute=attr;
+		item_tmp.nameid = nameid;
+		amount = script_getnum(st, 3);
+		identify = script_getnum(st, 4);
+		refine = script_getnum(st, 5);
+		attribute = script_getnum(st,6);
 		item_tmp.bound=(unsigned char)bound;
-		item_tmp.card[0]=(short)c1;
-		item_tmp.card[1]=(short)c2;
-		item_tmp.card[2]=(short)c3;
-		item_tmp.card[3]=(short)c4;
+		for (i = 0; i < MAX_SLOTS; ++i)
+			item_tmp.card[i] = script_getnum(st, 7 + i);
+
+		if (item_data->type == IT_WEAPON || item_data->type == IT_ARMOR) {
+			item_tmp.identify = identify > 0 ? 1 : 0;
+			item_tmp.refine = cap_value(refine, 0, MAX_REFINE);
+			item_tmp.attribute = cap_value(attribute, 0, CHAR_MAX);
+		} else if(item_data->type == IT_PETEGG) {
+			item_tmp.identify = 1;
+			item_tmp.refine = 0;
+			item_tmp.attribute = cap_value(attribute, 0, CHAR_MAX);
+		} else {
+			item_tmp.identify = 1;
+			item_tmp.refine = 0;
+			item_tmp.attribute = 0;
+		}
+		if (flag != 0)
+			item_tmp.identify = 0;
 
 		//Check if it's stackable.
 		if (!itemdb->isstackable(nameid))
@@ -8055,10 +8046,12 @@ bool buildin_delitem_search(struct map_session_data* sd, struct item* it, bool e
 
 	// when searching for nameid only, prefer additionally
 	if (!exact_match) {
+		int j;
 		// non-refined items
 		it->refine = 0;
 		// card-less items
-		memset(it->card, 0, sizeof(it->card));
+		for (j = 0; j < MAX_SLOTS; ++j)
+			it->card[j] = 0;
 	}
 
 	for (;;) {
@@ -8081,20 +8074,28 @@ bool buildin_delitem_search(struct map_session_data* sd, struct item* it, bool e
 			}
 
 			if (exact_match) {
-				if (inv->identify != it->identify || inv->attribute != it->attribute || memcmp(inv->card, it->card, sizeof(inv->card))) {
+				int j;
+				if (inv->identify != it->identify || inv->attribute != it->attribute) {
 					// not matching exact attributes
 					continue;
 				}
+				ARR_FIND(0, MAX_SLOTS, j, inv->card[i] != it->card[i]);
+				if (j != MAX_SLOTS)
+					continue;
 			} else {
 				if (sd->inventory_data[i]->type == IT_PETEGG) {
 					if (inv->card[0] == CARD0_PET && intif->CheckForCharServer()) {
 						// pet which cannot be deleted
 						continue;
 					}
-				} else if (memcmp(inv->card, it->card, sizeof(inv->card))) {
-					// named/carded item
-					important++;
-					continue;
+				} else {
+					int j;
+					ARR_FIND(0, MAX_SLOTS, j, inv->card[i] != it->card[i]);
+					if (j != MAX_SLOTS) {
+						// named/carded item
+						important++;
+						continue;
+					}
 				}
 			}
 
@@ -8121,11 +8122,14 @@ bool buildin_delitem_search(struct map_session_data* sd, struct item* it, bool e
 				}
 
 				if (exact_match) {
-					if (inv->refine != it->refine || inv->identify != it->identify || inv->attribute != it->attribute
-					 || memcmp(inv->card, it->card, sizeof(inv->card))) {
+					int j;
+					if (inv->refine != it->refine || inv->identify != it->identify || inv->attribute != it->attribute) {
 						// not matching attributes
 						continue;
 					}
+					ARR_FIND(0, MAX_SLOTS, j, inv->card[i] != it->card[i]);
+					if (j != MAX_SLOTS)
+						continue;
 				}
 
 				// count / delete item
@@ -8212,9 +8216,10 @@ BUILDIN(delitem2)
 {
 	struct map_session_data *sd;
 	struct item it;
+	int i;
 
-	if (script_hasdata(st,11)) {
-		int account_id = script_getnum(st,11);
+	if (script_hasdata(st, 7 + MAX_SLOTS)) {
+		int account_id = script_getnum(st, 7 + MAX_SLOTS);
 		sd = script->id2sd(st, account_id); // <account id>
 		if (sd == NULL) {
 			st->state = END;
@@ -8249,10 +8254,8 @@ BUILDIN(delitem2)
 	it.identify=script_getnum(st,4);
 	it.refine=script_getnum(st,5);
 	it.attribute=script_getnum(st,6);
-	it.card[0]=(short)script_getnum(st,7);
-	it.card[1]=(short)script_getnum(st,8);
-	it.card[2]=(short)script_getnum(st,9);
-	it.card[3]=(short)script_getnum(st,10);
+	for (i = 0; i < MAX_SLOTS; ++i)
+		it.card[i] = (short)script_getnum(st, 7 + i);
 
 	if( it.amount <= 0 )
 		return true;// nothing to do
@@ -13526,7 +13529,8 @@ BUILDIN(getequipcardid)
 
 	if (num > 0 && num <= ARRAYLENGTH(script->equip))
 		i=pc->checkequip(sd,script->equip[num-1]);
-	if(i >= 0 && slot>=0 && slot<4)
+
+	if (i >= 0 && slot >= 0 && slot < MAX_SLOTS)
 		script_pushint(st,sd->status.inventory[i].card[slot]);
 	else
 		script_pushint(st,0);
@@ -20003,9 +20007,13 @@ BUILDIN(countbound)
  *------------------------------------------*/
 BUILDIN(checkbound)
 {
-	int i, nameid = script_getnum(st,2);
+	int i, j, nameid = script_getnum(st,2);
 	int bound_type = 0;
 	struct map_session_data *sd = script->rid2sd(st);
+	bool has_refine = false;
+	bool has_attribute = false;
+	bool has_card[MAX_SLOTS] = { 0 };
+	struct item item_tmp = { 0 };
 
 	if (sd == NULL)
 		return true;
@@ -20022,15 +20030,43 @@ BUILDIN(checkbound)
 		ShowError("script_checkbound: Not a valid bind type! Type=%d\n", bound_type);
 	}
 
-	ARR_FIND( 0, MAX_INVENTORY, i, (sd->status.inventory[i].nameid == nameid &&
-			( sd->status.inventory[i].refine == (script_hasdata(st,4)? script_getnum(st,4) : sd->status.inventory[i].refine) ) &&
-			( sd->status.inventory[i].attribute == (script_hasdata(st,5)? script_getnum(st,5) : sd->status.inventory[i].attribute) ) &&
-			( sd->status.inventory[i].card[0] == (script_hasdata(st,6)? script_getnum(st,6) : sd->status.inventory[i].card[0]) ) &&
-			( sd->status.inventory[i].card[1] == (script_hasdata(st,7)? script_getnum(st,7) : sd->status.inventory[i].card[1]) ) &&
-			( sd->status.inventory[i].card[2] == (script_hasdata(st,8)? script_getnum(st,8) : sd->status.inventory[i].card[2]) ) &&
-			( sd->status.inventory[i].card[3] == (script_hasdata(st,9)? script_getnum(st,9) : sd->status.inventory[i].card[3]) ) &&
-			((sd->status.inventory[i].bound > 0 && !bound_type) || sd->status.inventory[i].bound == bound_type )) );
+	item_tmp.nameid = nameid;
+	if (script_hasdata(st, 4)) {
+		item_tmp.refine = script_getnum(st, 4);
+		has_refine = true;
+	}
+	if (script_hasdata(st, 5)) {
+		item_tmp.attribute = script_getnum(st, 5);
+		has_attribute = true;
+	}
+	for (j = 0; j < MAX_SLOTS; ++j) {
+		if (script_hasdata(st, 6 + j)) {
+			item_tmp.card[j] = script_getnum(st, 6 + j);
+			has_card[j] = true;
+		}
+	}
 
+	for (i = 0; i < MAX_INVENTORY; ++i) {
+		if (sd->status.inventory[i].nameid != item_tmp.nameid)
+			continue;
+		if (has_refine && sd->status.inventory[i].refine != item_tmp.refine)
+			continue;
+		if (has_attribute && sd->status.inventory[i].attribute != item_tmp.attribute)
+			continue;
+		ARR_FIND(0, MAX_SLOTS, j, has_card[j] && sd->status.inventory[i].card[j] != item_tmp.card[j]);
+		if (j != MAX_SLOTS)
+			continue;
+
+		if (bound_type == 0) {
+			// Any bound item
+			if (sd->status.inventory[i].bound != 0)
+				break;
+		} else {
+			// Only specific type
+			if (sd->status.inventory[i].bound == bound_type)
+				break;
+		}
+	}
 	if( i < MAX_INVENTORY ){
 		script_pushint(st, sd->status.inventory[i].bound);
 		return true;
@@ -20696,8 +20732,9 @@ void script_run_item_unequip_script(struct map_session_data *sd, struct item_dat
 void script_parse_builtin(void) {
 #if MAX_SLOTS == 4
 #define CARDSLOTS_CMDARGS "iiii"
+#define CARDSLOTS_CMDARGS_OPT "????"
 #else
-#error Compiling Hercules with MAX_SLOT > 4 requires the line above to be adjusted.
+#error Compiling Hercules with MAX_SLOT > 4 requires the lines above to be adjusted.
 #endif
 	struct script_function BUILDIN[] = {
 		/* Commands for internal use by the script engine */
@@ -20738,12 +20775,12 @@ void script_parse_builtin(void) {
 		BUILDIN_DEF(getelementofarray,"ri"),
 		BUILDIN_DEF(getitem,"vi?"),
 		BUILDIN_DEF(rentitem,"vi"),
-		BUILDIN_DEF(getitem2,"viiiiiiii?"),
+		BUILDIN_DEF(getitem2,"viiii" CARDSLOTS_CMDARGS "?"), // "viiiiiiii?"
 		BUILDIN_DEF(getnameditem,"vv"),
 		BUILDIN_DEF2(grouprandomitem,"groupranditem","i"),
 		BUILDIN_DEF(makeitem,"visii"),
 		BUILDIN_DEF(delitem,"vi?"),
-		BUILDIN_DEF(delitem2,"viiiiiiii?"),
+		BUILDIN_DEF(delitem2,"viiii" CARDSLOTS_CMDARGS "?"), // "viiiiiiii?"
 		BUILDIN_DEF2(enableitemuse,"enable_items",""),
 		BUILDIN_DEF2(disableitemuse,"disable_items",""),
 		BUILDIN_DEF(cutin,"si"),
@@ -21164,9 +21201,9 @@ void script_parse_builtin(void) {
 		 * Item bound [Xantara] [Akinari] [Mhalicot/Hercules]
 		 **/
 		BUILDIN_DEF2(getitem,"getitembound","vii?"),
-		BUILDIN_DEF2(getitem2,"getitembound2","viiiiiiiii?"),
+		BUILDIN_DEF2(getitem2,"getitembound2","viiii" CARDSLOTS_CMDARGS "i?"), // "viiiiiiiii?"
 		BUILDIN_DEF(countbound, "?"),
-		BUILDIN_DEF(checkbound, "i???????"),
+		BUILDIN_DEF(checkbound, "i???" CARDSLOTS_CMDARGS_OPT), // "i???????"
 
 		//Quest Log System [Inkfish]
 		BUILDIN_DEF(questinfo, "ii??"),
