@@ -2533,7 +2533,8 @@ int mob_dead(struct mob_data *md, struct block_list *src, int type) {
 	}
 
 	if(mvp_sd && md->db->mexp > 0 && md->special_state.ai == AI_NONE) {
-		int log_mvp[2] = {0};
+		int log_mvp_drop = 0;
+		int log_mvp_exp = 0;
 		unsigned int mexp;
 		int64 exp;
 
@@ -2551,7 +2552,7 @@ int mob_dead(struct mob_data *md, struct block_list *src, int type) {
 		clif->mvp_effect(mvp_sd);
 		clif->mvp_exp(mvp_sd,mexp);
 		pc->gainexp(mvp_sd, &md->bl, mexp,0, false);
-		log_mvp[1] = mexp;
+		log_mvp_exp = mexp;
 
 		if (!(map->list[m].flag.nomvploot || type&1)) {
 			/* pose them randomly in the list -- so on 100% drop servers it wont always drop the same item */
@@ -2590,7 +2591,7 @@ int mob_dead(struct mob_data *md, struct block_list *src, int type) {
 					item.nameid = mdrop[i].nameid;
 					item.identify = itemdb->isidentified2(data);
 					clif->mvp_item(mvp_sd, item.nameid);
-					log_mvp[0] = item.nameid;
+					log_mvp_drop = item.nameid;
 
 					//A Rare MVP Drop Global Announce by Lupus
 					if (rate <= battle_config.rare_drop_announce) {
@@ -2612,7 +2613,7 @@ int mob_dead(struct mob_data *md, struct block_list *src, int type) {
 			}
 		}
 
-		logs->mvpdrop(mvp_sd, md->class_, log_mvp);
+		logs->mvpdrop(mvp_sd, md->class_, log_mvp_drop, log_mvp_exp);
 	}
 
 	if (type&2 && !sd && md->class_ == MOBID_EMPELIUM && md->guardian_data) {
