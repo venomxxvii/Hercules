@@ -11622,10 +11622,9 @@ BUILDIN(homunculus_morphembryo)
 		enum homun_type m_class = homun->class2type(sd->hd->homunculus.class_);
 
 		if (m_class == HT_EVO && sd->hd->homunculus.level >= 99) {
-			struct item item_tmp;
+			struct item item_tmp = { 0 };
 			int i = 0;
 
-			memset(&item_tmp, 0, sizeof(item_tmp));
 			item_tmp.nameid = ITEMID_STRANGE_EMBRYO;
 			item_tmp.identify = 1;
 
@@ -12887,8 +12886,7 @@ BUILDIN(successremovecards)
 	for( c = sd->inventory_data[i]->slot - 1; c >= 0; --c ) {
 		if( sd->status.inventory[i].card[c] && itemdb_type(sd->status.inventory[i].card[c]) == IT_CARD ) {// extract this card from the item
 			int flag;
-			struct item item_tmp;
-			memset(&item_tmp,0,sizeof(item_tmp));
+			struct item item_tmp = { 0 };
 			cardflag = 1;
 			item_tmp.nameid   = sd->status.inventory[i].card[c];
 			item_tmp.identify = 1;
@@ -12904,8 +12902,7 @@ BUILDIN(successremovecards)
 	if (cardflag == 1) {
 		//if card was remove replace item with no card
 		int flag, j;
-		struct item item_tmp;
-		memset(&item_tmp,0,sizeof(item_tmp));
+		struct item item_tmp = { 0 };
 
 		item_tmp.nameid      = sd->status.inventory[i].nameid;
 		item_tmp.identify    = 1;
@@ -12961,9 +12958,7 @@ BUILDIN(failedremovecards)
 
 			if(typefail == 2) {// add cards to inventory, clear
 				int flag;
-				struct item item_tmp;
-
-				memset(&item_tmp,0,sizeof(item_tmp));
+				struct item item_tmp = { 0 };
 
 				item_tmp.nameid   = sd->status.inventory[i].card[c];
 				item_tmp.identify = 1;
@@ -12983,9 +12978,7 @@ BUILDIN(failedremovecards)
 		} else if (typefail == 1) {
 			// destroy the card
 			int flag, j;
-			struct item item_tmp;
-
-			memset(&item_tmp,0,sizeof(item_tmp));
+			struct item item_tmp = { 0 };
 
 			item_tmp.nameid      = sd->status.inventory[i].nameid;
 			item_tmp.identify    = 1;
@@ -19237,9 +19230,7 @@ BUILDIN(getrandgroupitem)
 		script_pushint(st, 1);
 	} else {
 		int i, get_count, flag;
-		struct item it;
-
-		memset(&it,0,sizeof(it));
+		struct item it = { 0 };
 
 		nameid = itemdb->group_item(data->group);
 

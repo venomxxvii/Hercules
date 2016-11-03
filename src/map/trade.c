@@ -298,7 +298,7 @@ int trade_check(struct map_session_data *sd, struct map_session_data *tsd)
 				for(i = 0; i < MAX_INVENTORY && inventory2[i].nameid; i++);
 				if (i == MAX_INVENTORY)
 					return 0;
-				memcpy(&inventory2[i], &inventory[n], sizeof(struct item));
+				inventory2[i] = inventory[n];
 				inventory2[i].amount = amount;
 				inventory[n].amount -= amount;
 			}
@@ -329,7 +329,7 @@ int trade_check(struct map_session_data *sd, struct map_session_data *tsd)
 			for(i = 0; i < MAX_INVENTORY && inventory[i].nameid; i++);
 			if (i == MAX_INVENTORY)
 				return 0;
-			memcpy(&inventory[i], &inventory2[n], sizeof(struct item));
+			inventory[i] = inventory2[n];
 			inventory[i].amount = amount;
 			inventory2[n].amount -= amount;
 		}

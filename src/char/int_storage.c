@@ -318,7 +318,7 @@ int mapif_parse_ItemBoundRetrieve_sub(int fd)
 
 	while( SQL_SUCCESS == SQL->StmtNextRow(stmt)) {
 		Assert_retb(i < MAX_INVENTORY);
-		memcpy(&items[i],&item,sizeof(struct item));
+		items[i] = item;
 		i++;
 	}
 	SQL->FreeResult(inter->sql_handle);

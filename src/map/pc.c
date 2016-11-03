@@ -4542,7 +4542,7 @@ int pc_additem(struct map_session_data *sd,struct item *item_data,int amount,e_l
 		if (i == INDEX_NOT_FOUND)
 			return 4;
 
-		memcpy(&sd->status.inventory[i], item_data, sizeof(sd->status.inventory[0]));
+		sd->status.inventory[i] = *item_data;
 		// clear equip and favorite fields first, just in case
 		if( item_data->equip )
 			sd->status.inventory[i].equip = 0;
@@ -5116,7 +5116,7 @@ int pc_cart_additem(struct map_session_data *sd,struct item *item_data,int amoun
 		if( i == MAX_CART )
 			return 2; // no room
 
-		memcpy(&sd->status.cart[i],item_data,sizeof(sd->status.cart[0]));
+		sd->status.cart[i] = *item_data;
 		sd->status.cart[i].amount=amount;
 		sd->cart_num++;
 		clif->cart_additem(sd,i,amount,0);
@@ -7788,8 +7788,7 @@ int pc_dead(struct map_session_data *sd,struct block_list *src) {
 	if( battle_config.bone_drop==2
 	 || (battle_config.bone_drop==1 && map->list[sd->bl.m].flag.pvp)
 	) {
-		struct item item_tmp;
-		memset(&item_tmp,0,sizeof(item_tmp));
+		struct item item_tmp = { 0 };
 		item_tmp.nameid=ITEMID_SKULL_;
 		item_tmp.identify=1;
 		itemdb->fill_produceinfo(&item_tmp, sd->status.char_id);
@@ -11542,7 +11541,7 @@ void pc_autotrade_prepare(struct map_session_data *sd) {
 
 	for(i = 0; i < sd->vend_num; i++) {
 		if( sd->vending[i].amount ) {
-			memcpy(&data->list[cursor],&sd->status.cart[sd->vending[i].index],sizeof(struct item));
+			data->list[cursor] = sd->status.cart[sd->vending[i].index];
 			cursor++;
 		}
 	}

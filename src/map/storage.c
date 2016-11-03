@@ -174,7 +174,7 @@ int storage_additem(struct map_session_data* sd, struct item* item_data, int amo
 		return 1;
 
 	// add item to slot
-	memcpy(&stor->items[i],item_data,sizeof(stor->items[0]));
+	stor->items[i] = *item_data;
 	stor->storage_amount++;
 	stor->items[i].amount = amount;
 	clif->storageitemadded(sd,&stor->items[i],i,amount);
@@ -479,7 +479,7 @@ int guild_storage_additem(struct map_session_data* sd, struct guild_storage* sto
 	if(i>=MAX_GUILD_STORAGE)
 		return 1;
 
-	memcpy(&stor->items[i],item_data,sizeof(stor->items[0]));
+	stor->items[i] = *item_data;
 	stor->items[i].amount=amount;
 	stor->storage_amount++;
 	clif->storageitemadded(sd,&stor->items[i],i,amount);

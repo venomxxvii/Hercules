@@ -1214,7 +1214,7 @@ int char_mmo_char_fromsql(int char_id, struct mmo_charstatus* p, bool load_every
 			SqlStmt_ShowDebug(stmt);
 
 	for( i = 0; i < MAX_INVENTORY && SQL_SUCCESS == SQL->StmtNextRow(stmt); ++i )
-		memcpy(&p->inventory[i], &tmp_item, sizeof(tmp_item));
+		p->inventory[i] = tmp_item;
 
 	strcat(t_msg, " inventory");
 
@@ -1248,7 +1248,7 @@ int char_mmo_char_fromsql(int char_id, struct mmo_charstatus* p, bool load_every
 			SqlStmt_ShowDebug(stmt);
 
 	for( i = 0; i < MAX_CART && SQL_SUCCESS == SQL->StmtNextRow(stmt); ++i )
-		memcpy(&p->cart[i], &tmp_item, sizeof(tmp_item));
+		p->cart[i] = tmp_item;
 	strcat(t_msg, " cart");
 
 	//read storage
