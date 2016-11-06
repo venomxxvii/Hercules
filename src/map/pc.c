@@ -1067,12 +1067,12 @@ bool pc_authok(struct map_session_data *sd, int login_id2, time_t expiration_tim
 		return false;
 	}
 
-	memcpy(&sd->status, st, sizeof(*st));
-
 	if (st->sex != sd->status.sex) {
 		clif->authfail_fd(sd->fd, 0);
 		return false;
 	}
+
+	sd->status = *st;
 
 	//Set the map-server used job id. [Skotlex]
 	i = pc->jobid2mapid(sd->status.class_);
