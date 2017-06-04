@@ -1,0 +1,5 @@
+warcraft,183,188,6	script	The Pub#pub	2_BULLETIN_BOARD,{
+OnInit:
+waitingroom "Quest Room",0;
+end;
+}

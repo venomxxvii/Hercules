@@ -1,0 +1,63 @@
+warcraft,212,189,4	script	PvP Warper	4_M_THAIONGBAK,{
+
+if(agitcheck() || agitcheck2()){
+mes "[ PvP Warper ]";
+mes "Sorry, You cannot Enter during ^0000FFWar of Emperium^000000";
+mes "Come back later, Thank You";
+close;
+}
+
+else{
+mes "[ PvP Warper ]";
+mes "Which one you wanna enter?";
+menu "PvP Room [ "+getmapusers("force_2-2")+" ]:",rpvp,"GvG Room [ "+getmapusers("guild_vs3")+" ]:",rgvg;
+
+rpvp:
+announce "[ PvP Waper ] "+strcharinfo(0)+" has entered in PvP Room",0,0x00CC99;
+warp("force_2-2", rand(161, 186), rand(119, 184));
+end;
+
+rgvg:
+announce "[ PvP Waper ] "+strcharinfo(0)+" has entered in GvG Room",0,0x00CC99;
+warp "guild_vs4",0,0;
+end;
+
+
+}
+
+}
+
+force_2-2	mapflag	pvp
+force_2-2	mapflag	nowarp
+force_2-2	mapflag	nowarpto
+force_2-2	mapflag	noreturn
+force_2-2	mapflag	nosave
+force_2-2	mapflag	pvp_noguild
+force_2-2	mapflag	pvp_noparty
+force_2-2	mapflag	nobranch
+force_2-2	mapflag	noicewall
+
+guild_vs4	mapflag	gvg
+guild_vs4	mapflag	nowarp
+guild_vs4	mapflag	nowarpto
+guild_vs4	mapflag	noreturn
+guild_vs4	mapflag	nosave
+guild_vs4	mapflag	nobranch
+guild_vs4	mapflag	noicewall
+
+
+//DUPLICATES PvP Warper	4_M_CHNGENERL
+payon,165,230,4	duplicate(PvP Warper)	PvP Warper#pay	4_M_CHNGENERL
+morocc,147,89,6	duplicate(PvP Warper)	PvP Warper#moc	4_M_CHNGENERL
+alberta,182,141,6	duplicate(PvP Warper)	PvP Warper#alb	4_M_CHNGENERL
+izlude,131,119,4	duplicate(PvP Warper)	PvP Warper#iz	4_M_CHNGENERL
+aldebaran,145,115,4	duplicate(PvP Warper)	PvP Warper#alde	4_M_CHNGENERL
+xmas,138,131,6	duplicate(PvP Warper)	PvP Warper#xmas	4_M_CHNGENERL
+comodo,198,148,6	duplicate(PvP Warper)	PvP Warper#com	4_M_CHNGENERL
+amatsu,191,88,6	duplicate(PvP Warper)	PvP Warper#ama	4_M_CHNGENERL
+gonryun,165,119,4	duplicate(PvP Warper)	PvP Warper#gon	4_M_CHNGENERL
+umbala,98,158,4	duplicate(PvP Warper)	PvP Warper#um	4_M_CHNGENERL
+louyang,224,46,4	duplicate(PvP Warper)	PvP Warper#lou	4_M_CHNGENERL
+lighthalzen,151,98,6	duplicate(PvP Warper)	PvP Warper#lhz	4_M_CHNGENERL
+hugel,102,143,4	duplicate(PvP Warper)	PvP Warper#hug	4_M_CHNGENERL
+rachel,123,118,6	duplicate(PvP Warper)	PvP Warper#Rac	4_M_CHNGENERL

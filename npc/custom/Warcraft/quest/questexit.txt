@@ -1,0 +1,24 @@
+warcraft,215,173,4	script	Quest Warper#1	4_BOARD3,{
+	mes "Hello, I can warp you to our Quest ROOM!";
+	while (1) {
+	switch(select("Yes Please!", "No Thanks.")) {
+	case 1:
+	warp "f_dst",100,22;
+	end;
+	case 2:
+	mes "Okay bye~";
+	close;
+	}
+}
+OnInit:
+waitingroom "Quest?",0;
+}
+
+//The Exit to Prontera
+
+f_dst,101,26,4	script	Exit#2	4_BOARD3,{
+	warp "warcraft" ,206,194;
+OnInit:
+waitingroom "Exit",0;
+
+}

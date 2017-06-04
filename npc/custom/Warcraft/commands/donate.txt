@@ -1,0 +1,8 @@
+-	script	donatew	FAKE_NPC,{
+OnInit:
+	bindatcmd "donate",strnpcinfo(3)+"::OnAtcommand";
+	end;
+OnAtcommand:
+	atcommand "@warp warcraft 199 167";
+	end;
+}

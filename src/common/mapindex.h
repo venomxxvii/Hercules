@@ -37,6 +37,8 @@ struct DBMap; // common/db.h
 #define MAP_DEFAULT_Y 150
 
 //Some definitions for the mayor city maps.
+#define MAP_WARCRAFT "warcraft"
+#define MAP_DOTA_MT "dota_mt"
 #define MAP_PRONTERA "prontera"
 #define MAP_GEFFEN "geffen"
 #define MAP_MORROC "morocc"

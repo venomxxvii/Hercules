@@ -39,8 +39,10 @@
 //=   Yellow/Green/Red/Blue Butterfly Wings (14582-14585),
 //=   Dungeon Teleport Scrolls (14527/14581)
 //= Also restricts "warpparty" and "warpguild" script commands.
-//=========================================================================
-
+//=========================================================================+
+final_dest	mapflag	noreturn
+gon_test	mapflag	noreturn
+new_zone01	mapflag	noreturn
 // Cities ========================
 //ayo_in01	mapflag	noreturn
 //ayo_in02	mapflag	noreturn

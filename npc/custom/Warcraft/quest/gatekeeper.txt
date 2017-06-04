@@ -1,0 +1,653 @@
+
+
+////////////////////////
+
+
+warcraft,215,155,4	script	Gate Keeper	4_F_CRU,{
+
+if(lifetime >= 1) goto LLT;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "What do you want to do?";
+menu "Enter Monster Arena",-,"Exchange Arena Points",Lex,"Check Arena Points",Lcheck;
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can earn points by killing monster that are inside there, and the points you earn can be traded for cool stuffs.";
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "There are two kinds of Gate pass, the ^0000FFone-time ticket^000000 is for one entry which cost 1 Credit and there's a ^0000FFlife-time ticket^000000 that can give you access anytime which cost 10 Credits.";
+mes "What entry do you want to go to?";
+menu "One-Time Ticket",-,"Life-Time Ticket",Llife;
+next;
+if(countitem(20030) < 1) goto Lnen;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go! Come & Visit us again!";
+mes "*Stamp Stamp*";
+delitem 20030,1;
+close2;
+warp "bat_b05",312,225;
+end;
+
+OnInit:
+	waitingroom "Monster Arena",0;
+	end;
+Llife:
+if(countitem(20030) < 10) goto Lnen;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Wow! you must be rich! Here you go! Come & Visit us again!";
+mes "*Stamp Stamp*";
+delitem 20030,10;
+set lifetime,1;
+close2;
+warp "bat_b05",312,225;
+
+Lnot:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Suit yourself!";
+close;
+
+Lnen:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Not enough Credits!";
+close;
+
+LLT:
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "What do you want to do?";
+menu "Enter Monster Arena",-,"Exchange Points",Lex,"Check Arena Points",Lcheck;
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "I see you have a life-time pass..";
+mes "Do you want to enter the Monster Arena?";
+menu "Yes",-,"No",Lnot;
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Bye! Shazam !";
+close2;
+warp "bat_b05",312,225;
+end;
+
+
+Lnoep:
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Not Enough Points!";
+close;
+
+Lcheck:
+next;
+mes strcharinfo(0)+"'s Arena Points : ^0000FF"+arenapoint+"^000000 Point(s)";
+close;
+
+Lex:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Choose from the categories below :";
+menu "Cards",-,"^0000ffEquips^000000",Leqp,"^FF00FFSupplies^000000",Lsupp;
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Choose from my card album..";
+menu "Ghostring - 4,000",-,"Deviling - 5,000",Ldev,"Turtle General Card - 7,000",Ltgen,"Tao Gunka Card - 10,000",Ltaog,"Evil Snake Lord Card - 5,500",Lesl,"Stormy Knight Card - 6,500",Lstorm,"Garm Card - 6,500",Lgarm,"Memory of Thanatos Card - 30,000",Lthana,"Lady Tanee Card - 15,000",Ltanee,"Kiel-D-01 Card - 7,000",Lkiel;
+
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 4000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 4047,1;
+set arenapoint,arenapoint-4000;
+close;
+
+Ldev:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 5000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 4474,1;
+set arenapoint,arenapoint-5000;
+close;
+
+Ltgen:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 7000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 4305,1;
+set arenapoint,arenapoint-7000;
+close;
+
+Ltaog:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 10000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 4302,1;
+set arenapoint,arenapoint-10000;
+close;
+
+Lesl:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 5500) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 4330,1;
+set arenapoint,arenapoint-5500;
+close;
+
+Lstorm:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 6500) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 4318,1;
+set arenapoint,arenapoint-6500;
+close;
+
+Lgarm:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 6500) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 4324,1;
+set arenapoint,arenapoint-6500;
+close;
+
+Lthana:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 30000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 4399,1;
+set arenapoint,arenapoint-30000;
+close;
+
+Ltanee:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 15000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 4376,1;
+set arenapoint,arenapoint-15000;
+close;
+
+Lkiel:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 7000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 4403,1;
+set arenapoint,arenapoint-7000;
+close;
+
+Leqp:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Choose from the available equipments..";
+menu "Fusion Valkyrie Armor - 10,000",-,"Fusion Valkyrie Manteau - 10,000",Lfmant,"Fusion Valkyrie Shoes - 10,000",Lfshoe,"Fusion Valkyrie Shield - 10,000",Lfshld,"Flame Aura - 20,000",Lfaura,"Travelers Hat - 15,000",Ltrhat,"Evil Majestic - 15,000",Lemaj,"Ensign Helm - 15,000",Lensi,"Cyclops Eye - 30,000",Lcycl,"Robo Ears - 10,000",Lrobo,"Devil Wings - 30,000",Ldevil;
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 10000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 20042,1;
+set arenapoint,arenapoint-10000;
+close;
+
+Lfmant:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 10000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 20043,1;
+set arenapoint,arenapoint-10000;
+close;
+
+Lfshoe:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 10000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 20045,1;
+set arenapoint,arenapoint-10000;
+close;
+
+Lfshld:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 10000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 20044,1;
+set arenapoint,arenapoint-10000;
+close;
+
+Lfaura:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 20000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 20063,1;
+set arenapoint,arenapoint-20000;
+close;
+
+Ltrhat:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 15000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 20027,1;
+set arenapoint,arenapoint-15000;
+close;
+
+Lemaj:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 15000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 20022,1;
+set arenapoint,arenapoint-15000;
+close;
+
+Lensi:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 15000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 20028,1;
+set arenapoint,arenapoint-15000;
+close;
+
+Lcycl:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 30000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 5135,1;
+set arenapoint,arenapoint-30000;
+close;
+
+Lrobo:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 10000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 20024,1;
+set arenapoint,arenapoint-10000;
+close;
+
+Ldevil:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 30000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 20056,1;
+set arenapoint,arenapoint-30000;
+close;
+
+
+
+Lsupp:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Choose from the available supplies.";
+menu "50 Box of Thunder - 100",-,"50 Yggdrasil Berry - 150",Lberry,"50 Yggdrasil Seed - 75",Lseed,"50 Poison Bottle - 500",Ledp,"50 Glistening Coat - 1000",Lgcoat,"50 Cursed Water - 100",Lcwater,"50 Wind Converter - 150",Lwconv,"50 Earth Converter - 150",Leconv,"50 Fire Converter - 150",Lfconv,"50 Frost Converter - 150",Lfrconv,"10 STR Food +10 - 500",Lsfood,"10 AGI Food +10 - 500",Lafood,"10 VIT Food +10 - 500",Lvfood,"10 INT Food +10 - 500",Lifood,"10 DEX Food +10 - 500",Ldfood,"10 LUK Food +10 - 500",Llfood;
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "....";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 100) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12028,50;
+set arenapoint,arenapoint-100;
+close;
+
+Lberry:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF150^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 150) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 607,50;
+set arenapoint,arenapoint-150;
+close;
+
+Lseed:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF75^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 75) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 608,50;
+set arenapoint,arenapoint-75;
+close;
+
+Ledp:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF500^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 500) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 678,50;
+set arenapoint,arenapoint-500;
+close;
+
+Lgcoat:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF1000^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 1000) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 7139,50;
+set arenapoint,arenapoint-1000;
+close;
+
+Lcwater:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF100^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 100) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12020,50;
+set arenapoint,arenapoint-100;
+close;
+
+Lwconv:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF150^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 150) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12117,50;
+set arenapoint,arenapoint-150;
+close;
+
+Leconv:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF150^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 150) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12116,50;
+set arenapoint,arenapoint-150;
+close;
+
+Lfconv:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF150^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 150) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12114,50;
+set arenapoint,arenapoint-150;
+close;
+
+Lfrconv:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF150^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 150) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12115,50;
+set arenapoint,arenapoint-150;
+close;
+
+Lconv:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF150^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 150) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12114,50;
+set arenapoint,arenapoint-150;
+close;
+
+Lsfood:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF500^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 500) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12075,10;
+set arenapoint,arenapoint-500;
+close;
+
+Lafood:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF500^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 500) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12090,10;
+set arenapoint,arenapoint-500;
+close;
+
+Lvfood:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF500^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 500) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12085,10;
+set arenapoint,arenapoint-500;
+close;
+
+Lifood:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF500^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 500) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12080,10;
+set arenapoint,arenapoint-500;
+close;
+
+Ldfood:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF500^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 500) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12095,10;
+set arenapoint,arenapoint-500;
+close;
+
+Llfood:
+next;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "You can get these for ^FF00FF500^000000 Points, Do you still want it?";
+menu "Yes",-,"Nevermind",Lnot;
+next;
+if(arenapoint < 500) goto Lnoep;
+mes "[ ^00FF00 Gate Keeper ^000000 ]";
+mes "Here you go!";
+getitem 12100,10;
+set arenapoint,arenapoint-500;
+close;
+
+}
+
+
+
+-	script	monsterarena	-1,{
+
+OnGuardianKill:
+set arenapoint,arenapoint+1;
+dispbottom "You earned 1 Arena Point";
+end;
+
+OnBowGuardianKill:
+set arenapoint,arenapoint+2;
+dispbottom "You earned 2 Arena Point";
+end;
+
+OnFlower1Kill:
+set arenapoint,arenapoint+20;
+dispbottom "You earned 20 Arena Points";
+end;
+
+OnFlower2Kill:
+set arenapoint,arenapoint+20;
+dispbottom "You earned 20 Arena Points";
+end;
+
+OnFlower3Kill:
+set arenapoint,arenapoint+20;
+dispbottom "You earned 20 Arena Points";
+end;
+
+OnPCDieEvent:
+        if ( strcharinfo(3) == "bat_b05" ) {
+            if ( death >= 0 ) {
+                set arenapoint,arenapoint-3;
+                dispbottom "You have lost 3 Arena Points. Your total is "+arenapoint+" Arena Points.";
+                set death, 0;
+            }
+	}
+}
+
+
+
+bat_b05,0,0,0,0	monster	Wild Flower	2110,15,1,7200,monsterarena::OnFlower1Kill
+bat_b05,0,0,0,0	monster	Wild Flower	2111,15,1,7200,monsterarena::OnFlower2Kill
+bat_b05,0,0,0,0	monster	Wild Flower	2112,15,1,7200,monsterarena::OnFlower3Kill
+bat_b05,0,0,0,0	monster	Arena Bow Guardian	2108,120,5,900,monsterarena::OnGuardianKill
+bat_b05,0,0,0,0	monster	Arena Sword Guardian	2109,150,5,900,monsterarena::OnBowGuardianKill
+
+///////////
+
+bat_b05	mapflag	nowarp
+bat_b05	mapflag	nosave
+bat_b05	mapflag	pvp
+bat_b05	mapflag	noteleport
+bat_b05	mapflag	nowarpto
+bat_b05	mapflag	noreturn
+bat_b05	mapflag	nobranch
+bat_b05	mapflag	noskill

@@ -1,0 +1,8 @@
+-	script	maintown	FAKE_NPC,{
+OnInit:
+	bindatcmd "maintown",strnpcinfo(3)+"::OnAtcommand";
+	end;
+OnAtcommand:
+	atcommand "@warp warcraft 206 194";
+	end;
+}

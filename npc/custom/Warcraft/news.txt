@@ -1,0 +1,38 @@
+-	script	news	FAKE_NPC,{
+OnPCLoginEvent:
+	cutin "kafra_04",2;
+mes "[^0000FFServer News^000000]";
+mes "Hello ^FF0000"+ strcharinfo(0) +"^000000!";
+mes "Happy Valentines Day from WarcraftRO!";
+mes "===============================";
+mes "We hope you enjoy your stay here!";
+mes "===============================";
+next;
+mes "[^0000FFServer News^000000]";
+mes "^FF0000Our server need you help:^000000";
+mes "* Write a review in ^FF0000Ratemyserver^000000.";
+mes "* Invite your friend to play!";
+mes "===============================";
+mes "Type @^FF0000commands^000000";
+mes "^FF0000To learn more about playing:^000000";
+mes "===============================";
+next;
+mes "[^0000FFServer News^000000]";
+mes "Warcraft RO custom ^FF0000commands^000000";
+mes "===============================";
+mes "Custom Commands:";
+mes "^FF0000@bst^000000 for Buy Sell & Trade(Market).";
+mes "^FF0000@security^000000 to secure your account.";
+mes "^FF0000@shop^000000 quick-shop for emergency.";
+mes "===============================";
+next;
+cutin "", 255;
+mes "[^0000FFServer News^000000]";
+mes "GMs don't ask for your username and password.";
+mes "(Because we already know it.) BWAHAHA!";
+mes "===============================";
+close;
+}
+
+//DUPLICATES
+//warcraft,206,197,4	duplicate(news)	Bulletin News#warc	CLEAR_NPC

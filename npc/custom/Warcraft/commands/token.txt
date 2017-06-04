@@ -1,0 +1,8 @@
+-	script	tokenw	FAKE_NPC,{
+OnInit:
+	bindatcmd "token",strnpcinfo(3)+"::OnAtcommand";
+	end;
+OnAtcommand:
+	atcommand "@warp yuno_in01 115 163";
+	end;
+}

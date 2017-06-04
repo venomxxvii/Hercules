@@ -17,7 +17,7 @@
 
 // Information NPC
 //============================================================
-prontera,149,193,4	script	WOE Information	2_BOARD1,{
+warcraft,207,196,4	script	WOE Information	2_BULLETIN_BOARD,{
 	doevent "WOE_CONTROL::OnMenu";
 	end;
 OnAgitStart:
@@ -40,7 +40,7 @@ OnInit:
 // -----------------------------------------------------------
 
 	set .CastleWarp,0;		// 1: Always enable all castle warps. | 0: Warp only to active castles.
-	set .AutoKick,1;		// Automatically kick players from inactive castles during WOE? (1:yes / 0:no)
+	set .AutoKick,0;		// Automatically kick players from inactive castles during WOE? (1:yes / 0:no)
 	set .NoOwner,0; 		// Automatically kick players from unconquered castles outside of WOE? (1:yes / 0:no)
 	set .ExitWarp,0;		// Warp all players from castles when WOE ends? (1:yes / 0:no)
 	set .GMAccess,99;		// GM level required to access Session Manager.
@@ -446,3 +446,18 @@ while(1) {
 		close;
 	} }
 }
+//DUPLICATES
+payon,168,230,4	duplicate(WOE Information)	WOE Information#pay	2_BOARD1
+morocc,149,103,6	duplicate(WOE Information)	WOE Information#moc	2_BOARD1
+alberta,198,149,4	duplicate(WOE Information)	WOE Information#alb	2_BOARD1
+izlude,123,120,6	duplicate(WOE Information)	WOE Information#iz	2_BOARD1
+aldebaran,145,112,4	duplicate(WOE Information)	WOE Information#ald	2_BOARD1
+xmas,151,135,4	duplicate(WOE Information)	WOE Information#xmas	2_BOARD1
+comodo,191,160,4	duplicate(WOE Information)	WOE Information#com	2_BOARD1
+amatsu,191,85,6	duplicate(WOE Information)	WOE Information#ama	2_BOARD1
+gonryun,162,122,4	duplicate(WOE Information)	WOE Information#gon	2_BOARD1
+umbala,90,157,6	duplicate(WOE Information)	WOE Information#um	2_BOARD1
+louyang,211,41,6	duplicate(WOE Information)	WOE Information#lou	2_BOARD1
+lighthalzen,162,100,4	duplicate(WOE Information)	WOE Information#lhz	2_BOARD1
+hugel,93,153,6	duplicate(WOE Information)	WOE Information#hug	2_BOARD1
+rachel,136,119,4	duplicate(WOE Information)	WOE Information#rac	2_BOARD1

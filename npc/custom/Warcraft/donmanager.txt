@@ -1,0 +1,120 @@
+//===== eAthena Script =======================================
+//= Custom-Currency Multi-Shop
+//===== By: ==================================================
+//= Euphy
+//===== Current Version: =====================================
+//= 1.2
+//===== Description: =========================================
+//= Allows for better organization in a single shop call.
+//= Note that there are two configuration areas.
+//============================================================
+
+// -------------------- Config 1 --------------------
+// For each shop added, copy this MSHOPX dummy data.
+// Write your shop names in the select() function.
+
+-	shop	MSHOP1	-1,512:-1
+-	shop	MSHOP2	-1,512:-1
+//-	shop	MSHOP3	-1,512:-1
+//-	shop	MSHOP4	-1,512:-1
+//-	shop	MSHOP5	-1,512:-1
+//-	shop	MSHOP6	-1,512:-1
+//-	shop	MSHOP7	-1,512:-1
+//-	shop	MSHOP8	-1,512:-1
+
+warcraft,230,190,2	script	Donation Manager	4W_F_KAFRA2,{
+	mes "[ ^FF0000Donation Manager^000000 ]";
+	mes "Hello there ^FF0000" + strcharinfo(0) + "^000000.";
+	mes "How may I help you?.";
+	switch(select("Nothing:Donation Info")) {
+	case 1:
+		next;
+	mes "[ ^FF0000Donation Manager^000000 ]";
+		mes "Okay, come back when you need me.";
+		close;
+	case 2:
+	next;
+	mes "[ ^FF0000Donation Manager^000000 ]";
+	mes "^000088Donation Rate^000000";	
+	mes "50 PhP = 1 Donation Ticket";		
+	mes "Minimum ^000088Donation^000000:";
+	mes "PhP 500.00 / $ 10.00 ";	
+	next;
+	mes "[ ^FF0000Donation Manager^000000 ]";
+	mes "^000088How to Donate?^000000";
+	mes "We Accept payments thru Remittance";	
+	mes "type ^000088@request^000000 to contact the GMs";	
+	mes "and for more information please";
+	mes "Visit our ^FF0000Forums^000000";
+	next;
+	mes "[ ^FF0000Donation Manager^000000 ]";
+	mes "Welcome to the Donation Ticket Shop,";
+	mes "you can purchase stuffs using";
+	mes "^000088Donation Ticket^000000.";
+	set @s, select("Headgear:Equipment");
+	
+
+// --------------------------------------------------
+
+	message strcharinfo(0),"We only accept "+getitemname(.Currency[@s])+".";
+	dispbottom "You have "+countitem(.Currency[@s])+" "+getitemname(.Currency[@s])+".";
+	callshop "MSHOP"+@s,1;
+	npcshopattach "MSHOP"+@s;
+	end;
+	}
+
+OnBuyItem:
+	set .@i,0;
+	while (.@i < getarraysize(@bought_nameid)) {
+		set .@j, 0;
+		while (.@j < getarraysize(getd(".Shop"+@s))) {
+			if(getd(".Shop"+@s+"["+.@j+"]") == @bought_nameid[.@i]) {
+				set @ItemCost, (getd(".Shop"+@s+"["+(.@j+1)+"]") * @bought_quantity[.@i]);
+				set @TotalCost, @TotalCost + @ItemCost;
+				break; }
+			set .@j, .@j+2; }
+		set .@i, .@i+1; }
+	if (@TotalCost > countitem(.Currency[@s])) dispbottom "You don't have enough "+getitemname(.Currency[@s])+".";
+	else {
+		set .@i,0;
+		while (.@i < getarraysize(@bought_nameid)) {
+			getitem @bought_nameid[.@i], @bought_quantity[.@i];
+			dispbottom "Purchased "+@bought_quantity[.@i]+"x "+getitemname(@bought_nameid[.@i])+".";
+			set .@i, .@i+1; }
+		delitem .Currency[@s], @TotalCost; }
+	set @TotalCost, 0;
+	deletearray @bought_nameid[0], 128;
+	deletearray @bought_quantity[0], 128;
+	end;
+
+OnInit:
+
+// -------------------- Config 2 --------------------
+// Currency:  The ID of each shop currency,
+//    in the same order as the shops.
+// Shop order follows that of the select() call,
+//   and is formatted "ID1,Count1,ID2,Count2,..."
+
+	setarray .Currency[1],30260,30260;
+	setarray .Shop1[0],20039,25,20038,50,5135,15,30195,15,20063,45,30080,45;
+	setarray .Shop2[0],2357,12,2115,12,2421,12,2524,14,2410,20,2646,10;
+//	setarray .Shop3[0],2302,2,2348,30; ITEMS SA EQUIP ,20065,22,30196,27,30198,25
+//	setarray .Shop4[0],2502,2,2513,15,2523,15;
+//	setarray .Shop5[0],2441,15;
+//	setarray .Shop6[0],2199,32768;
+//	setarray .Shop7[0],4051,3,4285,6;
+//	setarray .Shop8[0],513,1,532,2,634,4;
+
+// --------------------------------------------------
+
+	set .@i,1;
+	while (.@i <= getarraysize(.Currency)) {
+		set .@j,0;
+		while (.@j < getarraysize(getd(".Shop"+.@i))) {
+			npcshopdelitem "MSHOP"+.@i,512;
+			npcshopadditem "MSHOP"+.@i, getd(".Shop"+.@i+"["+.@j+"]"), getd(".Shop"+.@i+"["+(.@j+1)+"]");
+			set .@j, .@j+2; }
+		set .@i, .@i+1; }
+		waitingroom "Donation Manager",0;
+	end;
+}

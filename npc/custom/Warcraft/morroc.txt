@@ -1,0 +1,38 @@
+// Created by Aeromesi
+-	script	SatanMorroc#Inv	FAKE_NPC,{
+
+OnInit: 
+	//Configs	
+	.time = 60 * 60 * 20; // Time in milliseconds. Default: 6 hour (60 * 60 * 6000)	
+	.points = 100; // Points to give the player upon killing Morocc.
+	.points_name$ = "#CASHPOINTS"; // Variable name for points
+	.MobID = 1916;
+	.MobAM = 1;
+	.map$ = "morocc";
+	.x = 158;
+	.y = 92;
+	initnpctimer;
+	end;
+
+	OnTimer3600000: // 1 hour
+	OnSpawnMorocc:
+		if ( !$@Invaded ) {
+		
+		announce "Satan has invaded Morocc! Head there at once to stop him!",bc_all;
+		$@Invaded++;
+		monster .map$,.x,.y,""+strmobinfo(1,.MobID)+"",1916,1,strnpcinfo(0)+"::OnSatanDead";
+		end;
+} else
+		if ( $@Invaded ) {
+		end;
+}
+	OnSatanDead:
+		announce "Congratulations to "+strcharinfo(0)+" for sending Satan back into the Dimensional Vortex...",bc_all;
+		setd .points_name$, getd(.points_name$) + .points;
+		dispbottom "You now have "+#CASHPOINTS+" Cash Points!";
+		sleep 4000;
+		announce "Be warned... Satan will be back again.",bc_all;
+		$@Invaded = 0;
+		initnpctimer;
+		end;
+	}

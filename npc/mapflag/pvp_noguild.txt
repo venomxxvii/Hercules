@@ -32,7 +32,8 @@
 //================= Description ===========================================
 //= Ignores guild alliances on GvG-enabled maps.
 //=========================================================================
-
+new_zone01	mapflag	pvp_noguild
+guild_vs2	mapflag	pvp_noguild
 // PvP Arenas =================
 pvp_y_1-1	mapflag	pvp_noguild
 pvp_y_1-2	mapflag	pvp_noguild

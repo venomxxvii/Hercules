@@ -1,0 +1,7 @@
+function	script	deadly	{
+	if( isequippedcnt( 4357,4359,4361,4363,4365,4367,4408,4399,4407,4441,4427,4236 ) > 2 ){
+		message strcharinfo(0),"Sorry, You have reached the 2 Card max deadly.";
+		nude;
+		}
+	return;
+}

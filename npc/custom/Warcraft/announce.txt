@@ -1,0 +1,23 @@
+-	script	Newsxx	FAKE_NPC,{
+OnInit:
+set .Time,30;		// Announce every x Minute.
+
+setarray .News$[0],	// Random Message to be Announced
+		"Welcome to Warcraft Ragnarok Online , hope you are having fun!~",
+		"Reminder: The maximum capacity of zeny is only 2,000,000,000.",
+		"Please use @commmands to view useful commands.",
+		"Remember, a GM will never ask for your items, username and password, always be safe.",
+		"Reminder, hackers, botters, exploiters will recieve a harsh punishment if caught. That is NOT tolerated here at WarcRO.",
+		"Fact: You can use @bst to communicate for buying, selling and trading.",
+		"Remember, prolong periods of gameplay can cause serious health problems, take a breather! WarcRO can wait!",
+		"Please never forget to rate us @ ratemyserver.net!",
+		"If you find any bugs, please immediately report to our staffs. Reward will be provided.",
+		"All basic and starter items can be found at the mall just type @mall and find Kate Shop.",
+		"Don't forget to check the forums for the latest updates!",
+		"Erna: Have you got your freebies yet? If not come visit me at warcraft 196 195.";
+while( 1 ){
+	announce .News$[ rand( getarraysize( .News$ ) ) ],0;
+	sleep ( .Time * 60000 );
+	}
+end;
+}

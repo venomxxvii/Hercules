@@ -1,0 +1,136 @@
+-	script	nvz_manager	FAKE_NPC,{
+	OnInit:
+		disablenpc("Novice vs. Zombie");
+		disablenpc("Prize");
+		.nvzEventRunning = 0;
+		.nvzZombieSpawnCount = 4;
+	end;
+
+	OnClock0130:
+	OnClock0830:
+	OnClock1330:
+	OnClock1730:
+	OnClock1930:
+	OnClock2230:
+		disablenpc("Prize");
+		initnpctimer;
+		announce("Zombie Vs. Novice event will begin in 3 minutes! Please make a level 1 Novice in order to join!", bc_all);
+	end;
+
+	OnTimer5000:
+		announce("At the Main Town [Warcraft 207 160] has appeared npc ' Novice vs. Zombie '!", bc_all);
+		enablenpc("Novice vs. Zombie");
+	end;
+	
+	OnTimer60000:
+		announce("Zombie Vs. Novice event will begin in 2 minutes! Please make a level 1 Novice in order to join!", bc_all);
+	end;
+
+	OnTimer120000:
+		announce("Zombie Vs. Novice event will begin in 1 minutes! Please make a level 1 Novice in order to join!", bc_all);
+	end;
+	
+	OnTimer150000:
+		announce("In 30 seconds the monster will be started!", bc_map);
+	end;
+	
+	OnTimer175000:
+		announce("Event Zombie Vs. Novice will begin in ~5~!", bc_all);
+		announce "",0;
+	end;
+	
+	OnTimer176000:
+		announce("~4~!", bc_all);
+	end;
+	
+	OnTimer177000:
+		announce("~3~!", bc_all);
+	end;
+
+	OnTimer178000:
+		announce("~2~!", bc_all);
+	end;
+	
+	OnTimer179000:
+		announce("~1~!", bc_all);
+	end;
+
+	OnTimer180000:		
+		.nvzEventRunning = 1;
+		.nvzZombieCount = .nvzZombieSpawnCount;
+		announce("The 'Zombie Vs. Novice' Event has begun!", bc_all, 0x00FF00);
+		disablenpc("Novice vs. Zombie");
+		
+		for(.@i = 1; .@i <= .nvzZombieSpawnCount; .@i++)
+			monster("quiz_01", 42, 369, "Zombie-" + .@i, 1036, 1, strnpcinfo(3) + "::OnZombieKilled");
+	end;	
+	
+	OnPCLogoutEvent:
+	OnPCDieEvent:
+		if( .nvzEventRunning  == 0 || strcharinfo(PC_MAP) != "quiz_01" ) end;
+		
+		warp("warcraft", 206, 156);
+		atcommand("@alive");
+		dispbottom("You have lost...");
+
+		if( getmapusers("quiz_01") > 1 ) {
+			announce(getmapusers("quiz_01") + " people still fight for their lives.", bc_map, 0x00FF00);
+			end;
+		}
+		
+		if( getmapusers("quiz_01") == 1 ){
+			killmonsterall("quiz_01");
+			announce("You have won! Please claim your price at the Prize NPC!", bc_map);
+			enablenpc("Prize");
+			.nvzEventRunning = 0;
+		}
+
+		if( getmapusers("quiz_01") == 0 ){
+			killmonsterall("quiz_01");
+			.nvzEventRunning = 0;
+		}
+	end;
+
+	OnZombieKilled:
+		.nvzZombieCount--;
+		if(.nvzZombieCount == 0) {
+			announce("You have won! Please claim your price at the Prize NPC.", bc_map);
+			enablenpc("Prize");			
+			announce("'Zombie Vs. Novice' has ended as all Zombies have been killed!", bc_all);
+			.nvzEventRunning = 0;
+		}
+	end;
+}
+
+quiz_01,42,369,3	script	Prize	1_F_MARIA,{
+	announce("In ' Zombie Vs. Novice ' has won" + strcharinfo (0) + "! We congratulate " + ((Sex) ? "him" : "her") + "!", bc_all);
+	getitem(7539,2);
+	warp("warcraft", 206, 156);
+}
+
+warcraft,205,159,5	script	Novice vs. Zombie	ZOMBIE,{
+	if (BaseLevel > 1) {
+		mes("[^0000FFZombie Vs. Novice^000000]");
+		mes("You are not a level 1 novice");
+		close;		
+	}
+	
+	mes("[^0000FFZombie Vs. Novice^000000]");
+	mes("Do you want to join the Zombie Vs. Novice Event?");
+	next;
+	switch(select("Yes", "No")) {
+		case 1:
+			sc_end(SC_ALL);
+			sc_start(SC_DECREASEAGI, 300000, 10);
+			percentheal(100, 100);
+			atcommand("@storeall");
+			warp("quiz_01", 42, 369);
+		break;
+		case 2:
+			mes "[^0000FFZombie Vs. Novice^000000]";
+			mes "Allright, you can join anytime you want.";
+			close;
+		break;
+	}
+	end;
+}

@@ -103,7 +103,7 @@ prtg_cas01,64,56,4	duplicate(InsideFlagsPR1)	Kriemhild#6	GUILD_FLAG
 prtg_cas01,76,32,4	duplicate(InsideFlagsPR1)	Kriemhild#7	GUILD_FLAG
 prtg_cas01,84,32,4	duplicate(InsideFlagsPR1)	Kriemhild#8	GUILD_FLAG
 prtg_cas01,94,39,4	duplicate(InsideFlagsPR1)	Kriemhild#9	GUILD_FLAG
-prtg_cas01,94,24,4	duplicate(InsideFlagsPR1)	Kriemhild#10	GUILD_FLAG
+//prtg_cas01,94,24,4	duplicate(InsideFlagsPR1)	Kriemhild#10	GUILD_FLAG
 prtg_cas01,73,14,4	duplicate(InsideFlagsPR1)	Kriemhild#11	GUILD_FLAG
 prtg_cas01,73,6,4	duplicate(InsideFlagsPR1)	Kriemhild#12	GUILD_FLAG
 prtg_cas01,55,46,4	duplicate(InsideFlagsPR1)	Kriemhild#13	GUILD_FLAG
@@ -111,6 +111,8 @@ prtg_cas01,45,46,4	duplicate(InsideFlagsPR1)	Kriemhild#14	GUILD_FLAG
 
 //== Guild Flag (Town) =====================================
 prontera,155,190,4	duplicate(InsideFlagsPR1)	Kriemhild#15	GUILD_FLAG
+warcraft,206,190,4	duplicate(InsideFlagsPR1)	Kriemhild#16	GUILD_FLAG
+
 
 //== Kafra Employee ========================================
 prtg_cas01,96,173,0	duplicate(guildkafra)	Kafra Staff#prtg_cas01	4_F_KAFRA1

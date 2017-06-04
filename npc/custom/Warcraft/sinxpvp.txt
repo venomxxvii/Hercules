@@ -1,0 +1,41 @@
+warcraft,199,186,5	script	Unknown Thief	4_F_JOB_ASSASSIN,{
+if(agitcheck() || agitcheck2()){
+mes "[ PvP Warper ]";
+mes "Sorry, You cannot Enter during ^0000FFWar of Emperium^000000";
+mes "Come back later, Thank You";
+close;
+}
+else{
+if(Class == Job_Assassin_Cross){
+mes "[ Unknown Thief ]";
+mes "Hello there young fella, You look strong,";
+mes "Try your strength come come...";
+next;
+menu "Hell Yeah! ["+getmapusers("guild_vs3")+"]:",rass;
+
+rass:
+announce "[ Unknown Thief ] "+strcharinfo(0)+" has entered in Assassin Battle Arena!!",0,0xfce645;
+warp "guild_vs3",0,0;
+end;
+
+} else {
+mes "[ Unknown Thief ]";
+mes "Sorry, You cannot Enter the arena";
+mes "You must be an Assassin Cross to enter this arena, Thank You";
+close;
+}
+
+OnInit:
+	waitingroom "Battle Arena ["+getmapusers("guild_vs3")+"]",0;
+	end;
+
+}
+}
+guild_vs3	mapflag	nowarp
+guild_vs3	mapflag	nowarpto
+guild_vs3	mapflag	noreturn
+guild_vs3	mapflag	nosave
+guild_vs3	mapflag	pvp_noguild
+guild_vs3	mapflag	pvp_noparty
+guild_vs3	mapflag	nobranch
+guild_vs3	mapflag	noicewall

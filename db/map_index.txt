@@ -8,7 +8,6 @@
 // mapname<tab>index <- specifies index for this map
 // mapname <- map will use index of previous map +1
 // Note that map index 0 is special and reserved for "error" status.
-
 alb_ship 1
 alb2trea
 alberta
@@ -938,6 +937,28 @@ moro_cav
 1@jtb
 c_tower2_
 c_tower3_
+bat_a03
+bat_a04
+bat_a05
+bat_b03
+bat_b04
+bat_b05
+bat_c04
+bat_c05
+bat_c06
+bat_c07
+bat_c08
+schg_cas06
+schg_cas07
+schg_cas08
+arug_cas06
+arug_cas07
+arug_cas08
+rush_cas01
+rush_cas02
+rush_cas03
+rush_cas04
+region_8
 
 // Only add maps under this line if they are not standard maps!
 //======================================================================================
@@ -1007,3 +1028,15 @@ c_tower3_
 //
 //mymap	1250
 //mymap-2
+dota_mt 1251
+warcraft 1252
+final_dest 1253
+ufc_pvp2 1254
+ufc_pvp3 1255
+f_dst 1256
+market 1257
+pvp@tower 1258
+koth 1259
+lvl_dun02 1260
+lvl_dun03 1261
+ball2 1262

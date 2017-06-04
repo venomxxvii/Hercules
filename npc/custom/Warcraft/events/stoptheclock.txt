@@ -1,0 +1,157 @@
+warcraft,215,167,3	script	Stop the Clock	8_F,{
+
+
+if(.game == 1 && stopped != 1)	{
+	set stopped, 1;
+	set @stopped, .i;
+	message strcharinfo(0), "You stopped the clock at "+@stopped+".";
+	if(.lowest > @stopped)	{
+		set .lowest, @stopped;
+		set .winner$, strcharinfo(0);
+		}
+	end;
+}
+else if(.game == 1)	{
+	message strcharinfo(0), "You already stopped the clock.";
+	end;
+	}
+
+set .name$, "[Event Manager]";
+set .menu$, "Times:Information:Price:Leave";
+
+
+if(strcharinfo(0) == .winner$)	{
+	set stopped, 0;
+	mes .name$;
+	mes "Here you get your price.";
+	mes "Your Price is:";
+	mes "^ff0000"+$prize_amount+" "+getitemname($prize_id)+"^000000";
+	getitem 7227, 50;
+	set .winner$, "";
+	close;
+	}
+
+if(stopped == 1)	{
+	set stopped, 0;
+	mes .name$;
+	mes "You activated your char for the next round.";
+	close;
+	}
+
+if(getgmlevel() > 60) set .menu$, .menu$ + ":StartGame:SetPrice";
+
+mes .name$;
+mes "Welcome to the ^ff0000Stop the Clock^000000.";
+next;
+switch(select(.menu$))	{
+	case 1:
+	mes .name$;
+	mes "^ff0000Stop the Clock^000000 starts each day at:";
+	mes "^00800003:00^000000,^00800006:00^000000,^00800009:00^000000,^00800012:00^000000,^00800015:00^000000, ^00800018:00^000000 and ^00800021:00^000000 o'clock.";
+	close;
+
+	case 2:
+	mes .name$;
+	mes "^ff0000Stop the Clock^000000";
+	mes "is a game where you need to";
+	mes "click on me exactly when the counter reached 0.";
+	next;
+	mes .name$;
+	mes "It counts down from ^0080001000^000000 to ^ff00000^000000.";
+	next;
+	mes .name$;
+	mes "To win, you need to have the ^ff0000closest value to 0^000000 but at least ^ff0000below 50^000000.";
+	next;
+	mes .name$;
+	mes "The winner will recieve a prize.";
+	mes "^ff0000Don't forget to talk to me after the Event is over,";
+	mes "to reset your counter to take part on the next event.^000000";
+	close;
+
+	case 3:
+	mes .name$;
+	mes "The Price is:";
+	mes "^ff0000"+$prize_amount+" "+getitemname($prize_id)+"^000000";
+	close;
+
+	case 4:
+	close;
+
+	case 5:
+	sleep2 100;
+	close2;
+	goto L_start;
+	end;
+
+	case 6:
+	mes .name$;
+	mes "Enter the item id of the prize:";
+	input $prize_id;
+	next;
+	mes .name$;
+	mes "Enter the amount if items the winner will recieve:";
+	input $prize_amount;
+	next;
+	mes .name$;
+	mes "The price id is: ^ff0000"+$prize_id+"^000000";
+	mes "^008000("+getitemname($prize_id)+")^000000.";
+	mes "The amount is: ^ff0000"+$prize_amount+"^000000.";
+	close;
+	}
+
+OnClock1000:
+OnClock1200:
+OnClock1400:
+OnClock1600:
+OnClock2000:
+OnClock2200:
+OnClock00:
+L_start:
+
+announce "[Aline]: We are going to start an Stop the Clock Event in 1 Minute at warcraft 212 167!",bc_all;
+sleep2 30000;
+announce "[Aline]: We are going to start in 30 Seconds at warcraft 212 167!",bc_all;
+sleep2 20000;
+announce "[Aline]: Hurry up! Event starts in 10 Seconds at warcraft 212 167!",bc_all;
+sleep2 5000;
+announce "[Aline]: Get Ready only 5 seconds left at warcraft 212 167!",bc_all;
+sleep2 5000;
+announce "[Aline]: START!!!",bc_all;
+sleep2 5000;
+
+set .winner$, "";
+set .game, 1;
+set .lowest, 1000;
+
+for(set .i, 1000; .i > 300;set .i, .i - 100)	{
+		announce ":: "+.i+" ::",bc_blue|bc_area;
+		misceffect 377;
+		sleep2 1000;
+		}
+
+for(set .i, 300; .i > 50;set .i, .i - 10)	{
+		announce ":: "+.i+" ::",bc_blue|bc_area;
+		misceffect 377;
+		sleep2 100;
+		}
+
+for(set .i, 50; .i > 0;set .i, .i - 1)	{
+		announce ":: "+.i+" ::",bc_blue|bc_area;
+		misceffect 377;
+		sleep2 10;
+		}
+
+set .game, 0;
+
+if(.winner$ == "")	{
+	announce "Nobody hit the clock at the right moment. There is no winner.",bc_blue;
+	end;
+	}
+announce .winner$+" won Stop the Clock. He stopped it at "+.lowest+".",bc_blue;
+sleep2 5000;
+announce .winner$+"Please talk to me to get your price.",bc_blue;
+sleep2 5000;
+announce "To activate your char for the next round, please talk to me, too.",bc_all;
+
+end;
+}

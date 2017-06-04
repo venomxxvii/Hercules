@@ -1,0 +1,8 @@
+-	script	tcgw	FAKE_NPC,{
+OnInit:
+	bindatcmd "tcg",strnpcinfo(3)+"::OnAtcommand";
+	end;
+OnAtcommand:
+	atcommand "@warp prt_in 35 113";
+	end;
+}

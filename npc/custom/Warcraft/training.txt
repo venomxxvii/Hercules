@@ -1,0 +1,187 @@
+warcraft,215,155,4	script	Training Grounds	1_M_KNIGHTMASTER,{
+OnInit:
+waitingroom "Training Grounds",0,0;
+
+mes "[^000088 Training Grounds ^000000]";
+
+mes "Enter training grounds?";
+
+menu "Yes!",-;
+
+next;
+
+mes "[^000088 Training Grounds ^000000]";
+
+mes "Goodluck!";
+
+warp "06guild_r",100,181;
+
+close;
+
+}
+
+06guild_r,100,183,3	script	TG Keeper#1	729,{
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Hello, what do you want to do?";
+
+menu "-Leave",-,"-Harder monsters",Lgt,"-Heal me please",Lheal;
+
+next;
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Thank you for using the ^880000Training Grounds^000000!";
+
+warp "warcraft",206,194;
+
+close;
+
+Lgt:
+
+next;
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Take care!";
+
+warp "06guild_r",100,135;
+
+close;
+
+Lheal:
+
+next;
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Here you go!";
+
+percentheal 100,100;
+
+close;
+
+}
+
+06guild_r,100,137,3	script	TG Keeper#2	732,{
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Hello, what do you want to do?";
+
+menu "-Leave",-,"-Harder monsters",Lgt,"-Heal me please",Lheal;
+
+next;
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Thank you for using the ^880000Training Grounds^000000!";
+
+warp "warcraft",206,194;
+
+close;
+
+Lgt:
+
+next;
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Take care!";
+
+warp "06guild_r",100,87;
+
+close;
+
+Lheal:
+
+next;
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Here you go!";
+
+percentheal 100,100;
+
+close;
+
+}
+
+06guild_r,100,89,3	script	TG Keeper#3	730,{
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Hello, what do you want to do?";
+
+menu "-Leave",-,"-Harder monsters",Lgt,"-Heal me please",Lheal;
+
+next;
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Thank you for using the ^880000Training Grounds^000000!";
+
+warp "warcraft",206,194;
+
+close;
+
+Lgt:
+
+next;
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Take care!";
+
+warp "06guild_r",100,41;
+
+close;
+
+Lheal:
+
+next;
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Here you go!";
+
+percentheal 100,100;
+
+close;
+
+}
+
+06guild_r,100,43,3	script	TG Keeper#4	731,{
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Hello, what do you want to do?";
+
+menu "-Leave",-,"-Heal me please",Lheal;
+
+next;
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Thank you for using the ^880000Training Grounds^000000!";
+
+warp "warcraft",206,194;
+
+close;
+
+Lheal:
+
+next;
+
+mes "[^000088 TG Keeper ^000000]";
+
+mes "Here you go!";
+
+percentheal 100,100;
+
+close;
+
+}
+
+06guild_r	mapflag	nowarpto

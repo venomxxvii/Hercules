@@ -115,6 +115,7 @@ aldeg_cas05,150,202,2	duplicate(InsideFlagsA5)	Rothenburg#18	GUILD_FLAG
 
 //== Guild Flag (Town) =====================================
 aldebaran,128,97,4	duplicate(InsideFlagsA5)	Rothenburg#19	GUILD_FLAG
+warcraft,203,199,4	duplicate(InsideFlagsA5)	Rothenburg#20	GUILD_FLAG
 
 //== Kafra Employee ========================================
 aldeg_cas05,31,190,0	duplicate(guildkafra)	Kafra Staff#aldeg_cas05	4_F_KAFRA1

@@ -56,14 +56,10 @@ function	script	F_CashStore	{
 // - Summons Party members on party leader map to that location.
 // - No arguments.
 function	script	F_CashPartyCall	{
-	warp "Random", 0, 0;
-	if (getpartyleader(getcharid(CHAR_ID_PARTY), 2) == getcharid(CHAR_ID_CHAR)) {
-		getmapxy(.@map$, .@x, .@y, UNITTYPE_PC);
-		do {
-			.@x2 = .@x + rand(-2, 2);
-			.@y2 = .@y + rand(-2, 2);
-		} while (checkcell(.@map$, .@x2, .@y2, cell_chknopass));
-		warpparty(.@map$, .@x2, .@y2, getcharid(CHAR_ID_PARTY), .@map$, false);
+	warp "Random",0,0;
+	if (getpartyleader(getcharid(CHAR_ID_PARTY),2) == getcharid(CHAR_ID_CHAR)) {
+		getmapxy(.@mapl$, .@xl, .@yl, UNITTYPE_PC);
+		warpparty .@mapl$, .@xl, .@yl, getcharid(CHAR_ID_PARTY), .@mapl$;
 	}
 	return;
 }
@@ -309,4 +305,66 @@ function	script	F_Snowball	{
 		break;
 	}
 	end;
+}
+//== GPACK ======================================
+function	script	M_Gpack	{
+	switch(getarg(0)) {
+	case 1:
+	mes "[ Guild Package Manager ]";
+	mes "So you are a guild member,";
+	mes "please choose your accessory.";
+		switch(select("Strength", "Agility", "Vitality", "Intelligence", "Dexterity", "Luk")) {
+			case 1:
+			getitembound 2771,2,2;
+			break;
+			case 2:
+			getitembound 2770,2,2;
+			break;
+			case 3:
+			getitembound 2766,2,2;
+			break;
+			case 4:
+			getitembound 2768,2,2;
+			break;
+			case 5:
+			getitembound 2769,2,2;
+			break;
+			case 6:
+			getitembound 2767,2,2;
+			break;
+			}
+	next;
+	mes "[ Guild Package Manager ]";
+	mes "Please choose  your set..";
+		switch(select("STR", "AGI", "VIT", "INT", "DEX", "LUK")) {
+			case 1: //STR
+			getitembound 20002,1,2;
+			getitembound 30270,1,2;
+			close;
+			case 2: //AGI
+			getitembound 20011,1,2;
+			getitembound 20020,1,2;
+			close;
+			case 3: //VIT
+			getitembound 20001,1,2;
+			getitembound 20016,1,2;
+			close;
+			case 4: //INT
+			getitembound 20004,1,2;
+			getitembound 20019,1,2;
+			close;
+			case 5: //DEX
+			getitembound 20003,1,2;
+			getitembound 20018,1,2;
+			close;
+			case 6: //LUK
+			getitembound 20013,1,2;
+			getitembound 20017,1,2;
+			close;
+		}
+	case 2: 
+		mes "Nothing";
+		close;
+	}
+	return;
 }

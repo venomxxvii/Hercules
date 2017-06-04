@@ -32,6 +32,31 @@
 //================= Description ===========================================
 //= Disables use of @warp to a map.
 //=========================================================================
+//WARCRAFT
+final_dest	mapflag	noteleport
+new_2-2	mapflag	nowarpto
+new_zone01	mapflag	nowarpto
+guild_vs2	mapflag	nowarpto
+guild_vs4	mapflag	nowarpto
+yuno_in01	mapflag	nowarpto
+pvp_n_1-1	mapflag	nowarpto
+pvp_n_2-1	mapflag	nowarpto
+pvp_n_3-1	mapflag	nowarpto
+pvp_n_3-1	mapflag	nowarpto
+pvp_n_4-1	mapflag	nowarpto
+pvp_n_5-1	mapflag	nowarpto
+pvp_n_6-1	mapflag	nowarpto
+pvp_n_7-1	mapflag	nowarpto
+pvp_n_8-1	mapflag	nowarpto
+ordeal_3-2	mapflag	nowarpto
+// LHZ
+lhz_dun02	mapflag	nowarpto
+lhz_dun03	mapflag	nowarpto
+// Thanatos
+tha_scene01	mapflag	nowarpto
+thana_step	mapflag	nowarpto
+thana_boss	mapflag	nowarpto
+
 
 // Guild Castles ========================
 //alde_gld	mapflag	nowarpto
@@ -73,11 +98,8 @@ nguild_alde	mapflag	nowarpto
 nguild_gef	mapflag	nowarpto
 nguild_pay	mapflag	nowarpto
 nguild_prt	mapflag	nowarpto
-//Lighthalzen Bio-Lab 3F
-lhz_dun03	mapflag	nowarpto
 // Special Quests Places =======
 ama_test	mapflag	nowarpto
-gon_test	mapflag	nowarpto
 que_rachel	mapflag	nowarpto
 que_san04	mapflag	nowarpto
 cave	mapflag	nowarpto
@@ -115,8 +137,18 @@ que_qaru03	mapflag	nowarpto
 que_qaru04	mapflag	nowarpto
 que_qaru05	mapflag	nowarpto
 
+//Sealed Shrine ==================
+1@cata	mapflag	nowarpto
+2@cata	mapflag	nowarpto
+
 //Endless Tower ==================
 e_tower	mapflag	nowarpto
+1@tower	mapflag	nowarpto
+2@tower	mapflag	nowarpto
+3@tower	mapflag	nowarpto
+4@tower	mapflag	nowarpto
+5@tower	mapflag	nowarpto
+6@tower	mapflag	nowarpto
 
 // Battle Grounds ==============
 bat_c01	mapflag	nowarpto
@@ -149,6 +181,17 @@ man_in01	mapflag	nowarpto
 splendide	mapflag	nowarpto
 spl_fild01	mapflag	nowarpto
 spl_in01	mapflag	nowarpto
+
+//Orc's Memory ===================
+1@orcs	mapflag	nowarpto
+2@orcs	mapflag	nowarpto
+
+// Nidhoggr's Instance ===========
+1@nyd	mapflag	nowarpto
+2@nyd	mapflag	nowarpto
+
+// Ghost Palace ===========
+1@spa	mapflag	nowarpto
 
 // Poring War ====================
 poring_w01	mapflag	nowarpto

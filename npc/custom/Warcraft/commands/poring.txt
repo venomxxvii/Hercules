@@ -1,0 +1,8 @@
+-	script	eventzw	FAKE_NPC,{
+OnInit:
+	bindatcmd "@joinporing",strnpcinfo(3)+"::OnAtcommand";
+	end;
+OnAtcommand:
+	atcommand "@warp final_dest 117 22";
+	end;
+}

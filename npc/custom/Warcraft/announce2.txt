@@ -1,0 +1,43 @@
+/*    Advanced MOTD Hourly Script
+    Created by: Aeromesi
+
+    Idea from: Alexandria
+
+    Built for Hercules
+
+    Version 1.0
+
+    Special Feature: Randomized messages so that you'll never see the same message!
+    Edit .@ServName$ variable to your servers name
+
+    Comments: To add more messages, add them to the end of .announcemenets$.
+*/
+-	script	MOTD_HOURLY	FAKE_NPC,{
+end;
+
+OnInit:
+/*************************************************************
+ *                      Configuration                        *
+ *************************************************************/
+	.@ServName$ = "WarcraftRO";
+	setarray .announcements$, "Don't forget to check the forums for the latest updates on  "+ .@ServName$+"!",
+						  "For Selling, Buying and Trading just use @bst command!",
+						  "Remember, prolong periods of gameplay can cause serious health problems, take a breather!  "+ .@ServName$+" can wait!",
+						  "Remember, a GM will never ask for your username and password, always be safe.",
+						  "Reminder, hackers, botters, exploiters will recieve a harsh punishment if caught. That is NOT tolerated here at  "+ .@ServName$+".",
+						  .@ServName$+" is very happy to have such a wonderful community!",
+						  "Keep up the fun here at  "+ .@ServName$+"!";						  
+/*************************************************************
+ *     End of configuration. Edit below at your own risk!    *
+ *************************************************************/
+ 	end;
+	
+OnPCLoginEvent:
+    addtimer 240000,strnpcinfo(0) + "::OnAnnounce";
+	end; // Can comment to fall through.
+
+OnAnnounce:
+	announce .announcements$[rand(getarraysize(.announcements$))],bc_self;
+	addtimer 240000,strnpcinfo(0) + "::OnAnnounce";
+	end;
+}

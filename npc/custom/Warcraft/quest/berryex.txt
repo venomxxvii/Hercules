@@ -1,0 +1,106 @@
+// Created by Aeromesi
+// Version 1.0
+warcraft,196,155,6	script	Usable Exchanger	1_F_GYPSY,{
+if ( Weight >= MaxWeight/2 ) {
+	dispbottom "Weight is at least 50% or above, please store items to proceed with exchange.";
+	end;
+}
+mes " [ ^8B008BExchanger^000000 ]";
+mes "What would you like to convert? Yggdrasil Berries or Poison Bottles?";
+switch(select("Yggdrasil Berrys","Poison Bottles","Box of Thunder","Nothing currently.")) {
+case 1:
+if ( countitem(607) < 100 ) {
+mes "You need at least 100 Yggdrasil to create one 1 Yggdrasil Box.";
+close;
+}
+next;
+mes " [ ^8B008B Exchanger^000000 ]";
+	.Amount = countitem(607);
+	.Amount2 =  countitem(607)/100;
+mes "You can convert "+getitemname(607)+"("+countitem(607)+") for a total of "+getitemname(13517)+"("+countitem(607)/100+").";
+mes " ";
+mes "^ff0000Proceed?^000000";
+next;
+switch(select("Yes Please.","No thanks.")) {
+	case 1:
+	.Amount = countitem(607);
+	.Amount2 =  countitem(607)/100;
+for (  .i = 100; .i <= countitem((607)); ) {
+		delitem 607, 100;
+		getitem 13517, 1;
+}
+		mes " [ ^8B008B Exchanger^000000 ]";
+		.Offset = .Amount-countitem(607);
+		mes "Exchange of Yggdrasil Berry("+.Offset+") for Yggdrasil Box x "+.Amount2+".";
+		close;
+	case 2:
+	mes " [ ^8B008B Exchanger^000000 ]";
+	mes "Come back if you change your mind.";
+	close;
+}
+	case 2:
+if ( countitem(678 ) < 30 ) {
+mes "You need at least 30 Poison Bottles to create one 1 Poison Bottle Box.";
+close;
+}
+next;
+mes " [ ^8B008B Exchanger^000000 ]";
+mes "You can convert "+getitemname(678)+"("+countitem(678)+") for a total of "+getitemname(13973)+"("+countitem(678)/30+").";
+mes " ";
+mes "^ff0000Proceed?^000000";
+next;
+switch(select("Yes Please.","No thanks.")) {
+	case 1:
+	.Amount = countitem(678);
+	.Amount2 =  countitem(678)/30;
+for (  .i = 30; .i <= countitem((678)); ) {
+		delitem 678, 30;
+		getitem 13973, 1;
+}
+		.Offset = .Amount-countitem(678);
+		mes " [ ^8B008B Exchanger^000000 ]";
+		mes "Exchange of Poison Bottle("+.Offset+") for Poison Bottle Box x "+.Amount2+".";
+		close;
+	case 2:
+	mes " [ ^8B008B Exchanger^000000 ]";
+	mes "Come back if you change your mind.";
+	close;
+}
+case 3:
+if ( countitem(12028) < 100 ) {
+mes "You need at least 100 BoT to create one 1 BoT Box.";
+close;
+}
+next;
+mes " [ ^8B008B Exchanger^000000 ]";
+	.Amount = countitem(12028);
+	.Amount2 =  countitem(12028)/100;
+mes "You can convert "+getitemname(12028)+"("+countitem(12028)+") for a total of "+getitemname(20041)+"("+countitem(12028)/100+").";
+mes " ";
+mes "^ff0000Proceed?^000000";
+next;
+switch(select("Yes Please.","No thanks.")) {
+	case 1:
+	.Amount = countitem(12028);
+	.Amount2 =  countitem(12028)/100;
+for (  .i = 100; .i <= countitem((12028)); ) {
+		delitem 12028, 100;
+		getitem 20041, 1;
+}
+		mes " [ ^8B008B Exchanger^000000 ]";
+		.Offset = .Amount-countitem(12028);
+		mes "Exchange of BoT("+.Offset+") for BoT Box x "+.Amount2+".";
+		close;
+	case 2:
+	mes " [ ^8B008B Exchanger^000000 ]";
+	mes "Come back if you change your mind.";
+	close;
+}
+	case 4:
+	mes "Come back if you change your mind.";
+	close;
+}
+OnInit:
+	waitingroom "Box Exchanger",0;
+	end;
+}

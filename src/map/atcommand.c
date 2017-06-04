@@ -448,6 +448,16 @@ ACMD(mapmove) {
 	map_index = mapindex->name2id(map_name);
 	if (map_index)
 		m = map->mapindex2mapid(map_index);
+	
+	
+	
+	/*==========================================
+	* no @ go when players died - EliteBlack
+	*------------------------------------------*/
+	if( pc_isdead(sd) ) {
+		clif->message(fd,"You can not use @warp when you are dead.");
+		return 0;
+	}
 
 	if (!map_index || m < 0) { // m < 0 means on different server or that map is disabled! [Kevin]
 		clif->message(fd, msg_fd(fd,1)); // Map not found.
@@ -1835,7 +1845,7 @@ ACMD(go) {
 		int x, y;
 		int min_match; ///< Minimum string length to match
 	} data[] = {
-		{ MAP_PRONTERA,    156, 191, 3 }, //  0 = Prontera
+		{ MAP_WARCRAFT,    206, 194, 3 }, //  0 = Prontera
 		{ MAP_MORROC,      156,  93, 4 }, //  1 = Morroc
 		{ MAP_GEFFEN,      119,  59, 3 }, //  2 = Geffen
 		{ MAP_PAYON,       162, 233, 3 }, //  3 = Payon
@@ -1865,18 +1875,26 @@ ACMD(go) {
 		{ MAP_RACHEL,      130, 110, 3 }, // 23 = Rachel
 		{ MAP_VEINS,       216, 123, 3 }, // 24 = Veins
 		{ MAP_MOSCOVIA,    223, 184, 3 }, // 25 = Moscovia
-		{ MAP_MIDCAMP,     180, 240, 3 }, // 26 = Midgard Camp
-		{ MAP_MANUK,       282, 138, 3 }, // 27 = Manuk
-		{ MAP_SPLENDIDE,   197, 176, 3 }, // 28 = Splendide
-		{ MAP_BRASILIS,    182, 239, 3 }, // 29 = Brasilis
-		{ MAP_DICASTES,    198, 187, 3 }, // 30 = El Dicastes
-		{ MAP_MORA,         44, 151, 4 }, // 31 = Mora
-		{ MAP_DEWATA,      200, 180, 3 }, // 32 = Dewata
-		{ MAP_MALANGDO,    140, 114, 5 }, // 33 = Malangdo Island
-		{ MAP_MALAYA,      242, 211, 5 }, // 34 = Malaya Port
-		{ MAP_ECLAGE,      110,  39, 3 }, // 35 = Eclage
+//		{ MAP_MARKET,     100, 122, 3 }, // 26 = Mall
+//		{ MAP_MANUK,       282, 138, 3 }, // 27 = Manuk
+//		{ MAP_SPLENDIDE,   197, 176, 3 }, // 28 = Splendide
+//		{ MAP_BRASILIS,    182, 239, 3 }, // 29 = Brasilis
+//		{ MAP_DICASTES,    198, 187, 3 }, // 30 = El Dicastes
+//		{ MAP_MORA,         44, 151, 4 }, // 31 = Mora
+//		{ MAP_DEWATA,      200, 180, 3 }, // 32 = Dewata
+//		{ MAP_MALANGDO,    140, 114, 5 }, // 33 = Malangdo Island
+//		{ MAP_MALAYA,      242, 211, 5 }, // 34 = Malaya Port
+//		{ MAP_ECLAGE,      110,  39, 3 }, // 35 = Eclage
 	};
-
+	
+	/*==========================================
+	* no @ go when players died - EliteBlack
+	*------------------------------------------*/
+	if( pc_isdead(sd) ) {
+		clif->message(fd,"You can not use @go when you are dead.");
+		return 0;
+	}
+	
 	memset(map_name, '\0', sizeof(map_name));
 	memset(atcmd_output, '\0', sizeof(atcmd_output));
 
@@ -1895,7 +1913,7 @@ ACMD(go) {
 
 		return false;
 	}
-
+ 
 	// Numeric entry
 	if (ISDIGIT(*message) || (message[0] == '-' && ISDIGIT(message[1]))) {
 		town = atoi(message);
@@ -7972,6 +7990,16 @@ ACMD(feelreset)
 }
 
 /*==========================================
+* Hatred Reset [Plug and Play]
+*------------------------------------------*/
+ACMD(hatredreset)
+{
+	pc->resethate(sd);
+	clif->message(fd, "Reset 'hate' mobs.");
+	return true;
+}
+
+/*==========================================
  * AUCTION SYSTEM
  *------------------------------------------*/
 ACMD(auction)
@@ -9680,6 +9708,7 @@ void atcommand_basecommands(void) {
 		ACMD_DEF(homshuffle),
 		ACMD_DEF(showmobs),
 		ACMD_DEF(feelreset),
+		ACMD_DEF(hatredreset),
 		ACMD_DEF(auction),
 		ACMD_DEF(mail),
 		ACMD_DEF2("noks", ksprotection),

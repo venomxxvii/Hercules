@@ -33,6 +33,9 @@
 //= 1.6
 //=========================================================================
 
+1@nyd	mapflag	src4instance
+2@nyd	mapflag	src4instance
+
 nyd_dun02,100,201,3	script	Yggdrasil Gatekeeper	HIDDEN_NPC,8,8,{
 	if (ins_nyd == 0) {
 		mes "A great stone gate stands before you. The sculpture of a terrible dragon spreads its powerful looking wings.";
@@ -150,7 +153,7 @@ nyd_dun02,100,201,3	script	Yggdrasil Gatekeeper	HIDDEN_NPC,8,8,{
 					mes "If you are ready, I will allow you to enter.";
 					close;
 				case 2:
-					callsub L_Enter;
+					goto L_Enter;
 				case 3:
 					close;
 				}
@@ -160,12 +163,8 @@ nyd_dun02,100,201,3	script	Yggdrasil Gatekeeper	HIDDEN_NPC,8,8,{
 			next;
 			if(select("I want to go in.", "I want to leave.") == 2)
 				close;
-			callsub L_Enter;
+			goto L_Enter;
 		} else {
-			.@instance = has_instance2("1@nyd");
-			if (.@instance >= 0) {
-				instance_attach(.@instance);
-			}
 			if (.@ins_nyd_check == 1) {
 				if ('ins_nyd2 == 3 || 'ins_nyd2 == 4) {
 					mes "[Yggdrasil Gatekeeper]";
@@ -180,7 +179,7 @@ nyd_dun02,100,201,3	script	Yggdrasil Gatekeeper	HIDDEN_NPC,8,8,{
 				next;
 				if(select("I want to go in.", "I want to leave.") == 2)
 					close;
-				callsub L_Enter;
+				goto L_Enter;
 			} else if (.@ins_nyd_check == 2) {
 				if (.@ins_nyd_check2 == 1) {
 					mes "[Yggdrasil Gatekeeper]";
@@ -2169,27 +2168,27 @@ OnTouch:
 
 2@nyd,1,1,0	script	ins_nyd2_spawn_mobs	FAKE_NPC,{
 OnInstanceInit:
-	.@map$ = instance_mapname("2@nyd"); //temp fix since all mobs spawn on the same (inaccessable) area
-	areamonster .@map$,14,20,382,180,"Rhyncho",2020,40,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyRhynDead";
-	areamonster .@map$,14,20,382,180,"Phylla",2021,40,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyPhyDead";
-	areamonster .@map$,14,20,382,180,"Dark Shadow",2023,40,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyDarkshaDead";
-	areamonster .@map$,14,20,382,180,"Dark Pinguicula",2015,40,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyPingDead";
+	.@map$ = instance_mapname("2@nyd");
+	areamonster .@map$,200,92,180,80,"Rhyncho",2020,40,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyRhynDead";
+	areamonster .@map$,200,92,180,80,"Phylla",2021,40,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyPhyDead";
+	areamonster .@map$,200,92,180,80,"Dark Shadow",2023,40,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyDarkshaDead";
+	areamonster .@map$,200,92,180,80,"Dark Pinguicula",2015,40,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyPingDead";
 	end;
 
 OnMyRhynDead:
-	areamonster instance_mapname("2@nyd"),14,20,382,180,"Rhyncho",2020,1,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyRhynDead";
+	areamonster instance_mapname("2@nyd"),200,92,180,80,"Rhyncho",2020,1,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyRhynDead";
 	end;
 
 OnMyPhyDead:
-	areamonster instance_mapname("2@nyd"),14,20,382,180,"Phylla",2021,1,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyPhyDead";
+	areamonster instance_mapname("2@nyd"),200,92,180,80,"Phylla",2021,1,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyPhyDead";
 	end;
 
 OnMyDarkshaDead:
-	areamonster instance_mapname("2@nyd"),14,20,382,180,"Dark Shadow",2023,1,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyDarkshaDead";
+	areamonster instance_mapname("2@nyd"),200,92,180,80,"Dark Shadow",2023,1,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyDarkshaDead";
 	end;
 
 OnMyPingDead:
-	areamonster instance_mapname("2@nyd"),14,20,382,180,"Dark Pinguicula",2015,1,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyPingDead";
+	areamonster instance_mapname("2@nyd"),200,92,180,80,"Dark Pinguicula",2015,1,instance_npcname("ins_nyd2_spawn_mobs")+"::OnMyPingDead";
 	end;
 }
 

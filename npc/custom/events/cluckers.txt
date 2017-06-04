@@ -16,7 +16,7 @@
 //= 1.2a Switched 'atcommand' to 'unitskilluseid'.
 //============================================================
 
-prontera,156,219,4	script	Cluckers	4_NFCOCK,{
+warcraft,206,160,4	script	Cluckers	4_NFCOCK,{
 
 	set .@GMAccess,80;	// GM level required to access NPC
 
@@ -94,7 +94,13 @@ prontera,156,219,4	script	Cluckers	4_NFCOCK,{
 	mes "Cluck cluck! Cluuuuuck?";
 	mes "Cluck....";
 	close;
-
+	
+OnClock0900:
+OnClock1200:
+OnClock1500:
+OnClock1800:
+OnClock2100:
+L_START:
 OnTimer10000:
 	announce "Please hurry behind the fountain if you want to play with the crazy chicken!",bc_blue;
 	end;
@@ -107,7 +113,7 @@ OnTimer30000:
 OnTimer40000:
 	announce "GO! Click the chicken to get the prize!",bc_blue;
 	stopnpctimer;
-	if (!$cluck_item_id) set $cluck_item_id,512;
+	if (!$cluck_item_id) set $cluck_item_id,7450;
 	if (!$cluck_item_amount) set $cluck_item_amount,1;
 	set .startcluck,1;
 	end;

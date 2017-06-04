@@ -554,7 +554,7 @@ ein_in01,38,29,0	script	Paul Spanner	1_M_SMITH,{
 }
 
 //== Weapon/Armor Refiners =================================
-prt_in,63,60,0	script	Hollgrehenn	4_M_03,{
+prt_in,63,59,2	script	Hollgrehenn	4_M_03,{
 	callfunc "refinemain","Hollgrehenn",0;
 	end;
 }
@@ -993,7 +993,7 @@ function	script	phramain	{
 }
 
 //== Ori/Elu Refiners ======================================
-prt_in,63,69,3	script	Dietrich	4_M_02,{
+prt_in,54,67,5	script	Dietrich	4_M_02,{
 	callfunc "orimain","Dietrich";
 	end;
 }
@@ -1106,7 +1106,7 @@ payon,143,165,0	script	Repairman#pay	4_M_ORIENT01,{
 	end;
 }
 
-prt_in,63,54,2	script	Repairman#prt	4_M_04,{
+prt_in,54,58,6	script	Repairman#prt	4_M_04,{
 	callfunc "repairmain","Grendal";
 	end;
 }

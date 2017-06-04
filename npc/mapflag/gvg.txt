@@ -38,7 +38,6 @@
 
 // GvG Arenas =============
 guild_vs1	mapflag	gvg
-guild_vs2	mapflag	gvg
 guild_vs3	mapflag	gvg
 guild_vs4	mapflag	gvg
 guild_vs5	mapflag	gvg
@@ -120,5 +119,9 @@ nguild_prt	mapflag	gvg_castle
 //nguild_prt	mapflag	monster_noteleport
 
 // Guild Dungeons =========
+gld_dun01	mapflag	gvg_dungeon
+gld_dun02	mapflag	gvg_dungeon
+gld_dun03	mapflag	gvg_dungeon
+gld_dun04	mapflag	gvg_dungeon
 arug_dun01	mapflag	gvg_dungeon
 schg_dun01	mapflag	gvg_dungeon

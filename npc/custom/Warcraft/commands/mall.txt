@@ -1,0 +1,8 @@
+-	script	mallw	FAKE_NPC,{
+OnInit:
+	bindatcmd "mall",strnpcinfo(3)+"::OnAtcommand";
+	end;
+OnAtcommand:
+	atcommand "@warp market 101 112";
+	end;
+}

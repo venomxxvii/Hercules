@@ -1,0 +1,148 @@
+// https://rathena.org/board/topic/108888-request-a-gold-room-drop-gold-point/
+
+warcraft,196,158,5	script	Gold Room#goldroom	4_M_EINMINER,{
+	doevent "gold_room_main::OnTalk";
+}
+
+// warp portal back prontera
+ordeal_3-2,155,153,4	script	Exit Mo 'to	4_M_EINMINER,{
+	mes "[ Lagusan ng Buhay ]";
+	mes "Hello, I am expert at running away!";
+	mes "You want to leave?";
+	while (1) {
+	switch(select("Yes, I'm Scared!", "Dqf? No!")) {
+	case 1:
+		warp "warcraft" ,206,155;
+	end;
+	case 2:
+	mes "[ Lagusan ng Buhay ]";
+	mes "Okay, Brave man!~";
+	close;
+	}
+}
+}
+// Duplicados Warps v1.0
+ordeal_3-2.gat,130,193,0	warp	goldroomwrp#1	3,3,ordeal_3-2.gat,154,154
+ordeal_3-2.gat,106,154,0	warp	goldroomwrp#2	3,3,ordeal_3-2.gat,154,154
+ordeal_3-2.gat,201,129,0	warp	goldroomwrp#3	3,3,ordeal_3-2.gat,154,154
+ordeal_3-2.gat,177,193,0	warp	goldroomwrp#4	3,3,ordeal_3-2.gat,154,154
+
+// peco peco summon
+ordeal_3-2,0,0,0,0	monster	Golden Peco Peco	3180,800,60000,0,"gold_room_main::OnKill"
+// GUARDIAN
+//ordeal_3-2,0,0,0,0	monster	Bantay sa Pasko	3181,100,60000,0,"gold_room_main::OnKill"
+
+-	script	gold_room_main	FAKE_NPC,{
+	
+	OnInit:
+		// gold room map
+		.Map$ = "ordeal_3-2";
+		// entrance fee
+		.zeny_cost = 1000000;
+		// rate to get gold
+	//	.rate = 90;
+		// gold random amount
+		setarray .gold_amount,5;
+		
+		setmapflag .Map$,mf_noteleport;
+		setmapflag .Map$,mf_pvp;
+		setmapflag .Map$,mf_pvp_noguild;
+		setmapflag .Map$,mf_pvp_noparty;
+		setmapflag .Map$,mf_nobranch;
+		setmapflag .Map$,mf_nosave;
+		setmapflag .Map$,mf_nomemo;
+		setmapflag .Map$,mf_noreturn;
+		setmapflag .Map$,mf_nowarp;
+		setmapflag .Map$,mf_nowarpto;
+		end;
+	
+	OnTalk:
+			mes "[ Gold Room Manager ]";
+	mes "How may I serve for you ?";
+	mes "I can warp you to a Gold Mine.";
+	next;
+	mes "[ Gold Room Manager ]";
+	mes "I need you to give me";
+		if ( .zeny_cost ) 
+			mes F_InsertComma( .zeny_cost ) + " Zeny to enter.";
+		switch ( select( 
+			"Enter Gold Room",
+			"Exchange Gold Point(s)",
+			"Cancel"
+		)) {
+			case 1:
+				if ( Zeny < .zeny_cost ) {
+					mes "Not enough Zeny.";
+				}
+				else {
+					next;
+					set .@a,rand(50);
+					set .@b,rand(50);
+					mes "[Gold Room]";
+					mes "Before you enter, you need to answer the question  ";
+					mes "for security check.";
+					mes "If A = "+.@a+"   B = "+.@b;
+				switch( rand(1) ){
+					set .@answer,.@a + .@b;
+					mes "How many is A + B ?";
+					next;
+					input .@input;	
+					next;
+					if( .@input!=.@answer ) {
+					atcommand "@kick " + strcharinfo(0);
+					close;
+					break;
+					}
+					else if (.@input==.@answer) {
+					Zeny -= .zeny_cost;
+					warp .Map$,153,154;
+					close;
+					}
+				end;
+				}
+				}
+				break;
+			case 2:	
+				mes "You got "+F_InsertComma( #GOLDPOINTS )+" Points";
+				input .@value,0,#GOLDPOINTS;
+				if ( checkweight( 969, .@value ) ) {
+					#GOLDPOINTS -= .@value;
+					getitem 969,.@value;
+					mes "Gained "+.@value+" Gold.";
+				}
+				else {
+					mes "Sorry your transaction failed.";
+					next;
+					mes "You have to farm gold to exchange.";
+					mes "Please input Gold you wanted to exchange.";
+				}
+			default:
+				break;
+		}
+		close;
+		
+	OnKill:	
+			.@point = rand(1, .gold_amount[0]);
+			#GOLDPOINTS += .@point;
+			dispbottom "Gained "+.@point+" Gold Point. You got "+F_InsertComma( #GOLDPOINTS )+" Gold Points now.";
+		end;
+
+	OnPCDieEvent:
+			if (strcharinfo(3) != "ordeal_3-2") end;
+			#GOLDPOINTS = 0;
+			dispbottom "You died, you lost all the Gold point(s).";
+		end;
+}
+
+
+// Map Flags v1.0
+ordeal_3-2	mapflag	nowarp
+ordeal_3-2	mapflag	nobranch
+ordeal_3-2	mapflag	nomemo
+ordeal_3-2	mapflag	nowarpto
+ordeal_3-2	mapflag	nopenalty
+ordeal_3-2	mapflag	pvp_noparty
+ordeal_3-2	mapflag	noskill
+ordeal_3-2	mapflag	nosave
+ordeal_3-2	mapflag	novending
+ordeal_3-2	mapflag	noteleport

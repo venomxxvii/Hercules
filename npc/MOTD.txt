@@ -29,6 +29,7 @@
 
 // run when any character logs in, attached to them.
 -	script	HerculesMOTD	FAKE_NPC,{
-	message strcharinfo(PC_NAME),"Welcome to Hercules! Enjoy! Please report any bugs you find.";
+	dispbottom "Welcome to WarcraftRO! Enjoy! Please report any bugs you find.",0x49c0a5;
+	dispbottom "www.warcraft-ro.net ",0x49c0a5;
 	end;
 }

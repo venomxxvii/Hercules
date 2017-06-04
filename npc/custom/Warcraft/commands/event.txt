@@ -1,0 +1,8 @@
+-	script	eventw	FAKE_NPC,{
+OnInit:
+	bindatcmd "event",strnpcinfo(3)+"::OnAtcommand";
+	end;
+OnAtcommand:
+	atcommand "@warp warcraft 180 206";
+	end;
+}

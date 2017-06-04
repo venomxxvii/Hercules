@@ -1,0 +1,54 @@
+function	script	gpackl	{
+	mes "[ Guild Package Manager ]";
+	mes "So you are a guild member,";
+	mes "please choose your accessory.";
+		switch(select("Strength", "Agility", "Vitality", "Intelligence", "Dexterity", "Luk")) {
+			case 1:
+			getitembound 2771,2,2;
+			next;
+			case 2:
+			getitembound 2770,2,2;
+			next;
+			case 3:
+			getitembound 2766,2,2;
+			next;
+			case 4:
+			getitembound 2768,2,2;
+			next;
+			case 5:
+			getitembound 2769,2,2;
+			next;
+			case 6:
+			getitembound 2767,2,2;
+			next;
+	mes "[ Guild Package Manager ]";
+	mes "Please choose  your set..";
+		switch(select("STR", "AGI", "VIT", "INT", "DEX", "LUK")) {
+			case 1: //STR
+			getitembound 20002,1,2;
+			getitembound 20002,1,2;
+			next;
+			case 2: //AGI
+			getitembound 20011,1,2;
+			getitembound 20020,1,2;
+			next;
+			case 3: //VIT
+			getitembound 20001,1,2;
+			getitembound 20016	,1,2;
+			next;
+			case 4: //INT
+			getitembound 20004,1,2;
+			getitembound 20019,1,2;
+			next;
+			case 5: //DEX
+			getitembound 20003,1,2;
+			getitembound 20018,1,2;
+			next;
+			case 6: //LUK
+			getitembound 20013,1,2;
+			getitembound 20017,1,2;
+			next;
+		}
+	}
+	return;
+}

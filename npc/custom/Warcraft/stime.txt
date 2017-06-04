@@ -1,0 +1,17 @@
+warcraft,204,196,5	script	Server Time	4_CAT,{
+	mes "[Cat~o Timer]";
+	mes "Hello, Aren't you surprised?";
+	mes "A talking Cat!!!!?";
+	next;
+	mes "[Cat~o Timer]";
+	mes "Just kidding, Im here to show you";
+	mes "the Server Time.";
+	close;
+end;
+OnInit:
+	while(1) {
+		delwaitingroom;
+		waitingroom " "+ gettimestr( "%I:%M:%S %p",21 ),0;
+		sleep 1000;
+    }
+}

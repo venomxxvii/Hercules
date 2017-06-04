@@ -1,0 +1,51 @@
+f_dst,103,17,5	script	Icarus	4_M_HUMERCHANT,{
+mes "[ Icarus ]";
+mes "Oh Grasya Santisimo!!";
+mes "You have spoken to Uncle Thyrone!?";
+next;
+mes "[ Icarus ]";
+mes "By the way I am Icarus crafter of Icarus Wing";
+mes "Would you like to possess it?";
+menu "Yes, I deserve it!",-,"No, I'm not good enough.",L_ayaw;
+next;
+mes "[ Icarus ]";
+mes "This Wing is very complicated, it needs very rare materials to craft it. If you really want to possess it gather these items for me";
+next;
+mes "500 Moth Wings";
+mes "1 Black Butterfly Wing";
+mes "10 White Dyestuff";
+mes "20 Credits";
+next;
+mes "[ Icarus ]";
+mes "I will be waiting for you chosen one!";
+if(countitem(1058) < 500 || countitem(20012) < 1 || countitem(982) < 10 || countitem(20030) < 20) goto koolangz;
+if(countitem(1058) >= 500 || countitem(20012) >= 1 || countitem(982) >= 10 || countitem(20030) >= 20) goto icaruz;
+close;
+L_ayaw:
+
+mes "[ Icarus ]";
+mes "Wacha Wachi Wacho... Go! Shoooo";
+mes "Just speak to me if you want it already";
+close;
+
+
+koolangz:
+next;
+mes "[ Icarus ]";
+mes "As I said, one missing material and all the others go to waste";
+close;
+icaruz:
+next;
+mes "[ Icarus ]";
+mes "Very well done my friend you have finished the quest and acquired the Valkyrie Armor.";
+delitem 1058,500;
+delitem 20012,1;
+delitem 982,10;
+delitem 20030,20;
+next;
+getitem 20005,1;
+next;
+mes "[ Icarus ]";
+mes "Good Job! Enjoy your precious item.";
+close;
+}

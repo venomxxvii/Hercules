@@ -1,0 +1,22 @@
+warcraft,215,164,3	script	Token Warper	1_M_SMITH,{
+	mes "Hello, Lets do token quest!!";
+	while (1) {
+	switch(select("Yes Please!", "No Thanks.")) {
+	case 1:
+	warp "yuno_in01",108,157;
+	end;
+	case 2:
+	mes "Okay bye~";
+	close;
+	}
+}
+}
+
+//The Exit to Prontera
+
+yuno_in01,112,158,4	script	Exit	4_BOARD3,{
+	warp "warcraft" ,206,194;
+OnInit:
+waitingroom "Exit",0,0;
+
+}

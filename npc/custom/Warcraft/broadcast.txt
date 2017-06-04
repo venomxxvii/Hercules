@@ -1,0 +1,66 @@
+warcraft,234,213,4	script	Broadcaster	4_F_KAFRA4,{
+//what's the npc name to show in messages?
+set @npcname$, "Broadcaster";
+//NPC Headers Name:
+set @header$,"[^0000ff" + @npcname$ + "^000000]";
+	//NPC COST PER Broadcast:
+	set	Broadcastfee, 5000000;
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+mes @header$;
+mes "Hi, I'm the Broadcaster";
+mes "I can Broadcast a message for you";
+next;
+mes @header$;
+mes "It costs 1,000,000 Zeny ";
+next;
+mes @header$;
+mes "Would you like to Broadcast?";
+switch (select("Yes","No")){
+case 1:
+if(Broadcast> gettimetick(2)) {
+next;
+mes @header$;
+mes "Sorry you have to wait for 3 minutes.";
+close;
+}
+next;
+mes @header$;
+if(Zeny<1000000) goto noZenybc;
+set Zeny, Zeny - Broadcastfee;
+mes "Please input your message.";
+next;
+input Broadcast$;
+announce "[ Shout ] "+strcharinfo(0)+": "+Broadcast$+"",0,0xffbc55;
+close2;
+set Broadcast, gettimetick(2)+180;
+dispbottom "Broadcaster: Please wait for 3 minutes until next broadcast to avoid flooding.";
+end;
+case 2:
+mes "Suit yourself";
+close;
+}
+noZenybc:
+mes "I have to check that you have";
+mes "enough money";
+next;
+mes @header$;
+mes "Im sorry but you don't have enough Zeny";
+mes "Go get it if you want to Broadcast";
+close;
+}
+
+//DUPLICATES Broadcaster	4_F_KAFRA4
+payon,170,223,4	duplicate(Broadcaster)	Broadcaster#pay	4_F_KAFRA4
+morocc,147,101,6	duplicate(Broadcaster)	Broadcaster#mocc	4_F_KAFRA4
+alberta,187,144,6	duplicate(Broadcaster)	Broadcaster#albr	4_F_KAFRA4
+izlude,132,114,4	duplicate(Broadcaster)	Broadcaster#iz	4_F_KAFRA4
+aldebaran,145,121,4	duplicate(Broadcaster)	Broadcaster#alde	4_F_KAFRA4
+xmas,154,127,4	duplicate(Broadcaster)	Broadcaster#xmas	4_F_KAFRA4
+comodo,194,155,4	duplicate(Broadcaster)	Broadcaster#com	4_F_KAFRA4
+amatsu,202,84,4	duplicate(Broadcaster)	Broadcaster#ama	4_F_KAFRA4
+gonryun,153,118,6	duplicate(Broadcaster)	Broadcaster#gon	4_F_KAFRA4
+umbala,97,148,6	duplicate(Broadcaster)	Broadcaster#um	4_F_KAFRA4
+louyang,221,41,6	duplicate(Broadcaster)	Broadcaster#lou	4_F_KAFRA4
+lighthalzen,151,89,6	duplicate(Broadcaster)	Broadcaster#lhz	4_F_KAFRA4
+hugel,102,150,4	duplicate(Broadcaster)	Broadcaster#hug	4_F_KAFRA4
+rachel,123,107,6	duplicate(Broadcaster)	Broadcaster#rac	4_F_KAFRA4

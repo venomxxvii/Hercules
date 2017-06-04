@@ -1,0 +1,25 @@
+warcraft,234,194,3	script	Refine Master	4_M_REPAIR,{
+
+mes "What item do you want to be refined?";
+next;
+set @refine,.equip_part[select(getequipname(EQI_HEAD_TOP)+":"+getequipname(EQI_ARMOR)+":"+getequipname(EQI_GARMENT)+":"+getequipname(EQI_SHOES)+":"+(getiteminfo(EQI_HAND_L,2)==4?"":getequipname(EQI_HAND_L)));];
+
+if(countitem(7227) < 15) {
+mes "You are missing:";
+mes ""+((countitem(7227) < 15)?"15 TCG Cards":"")+"";
+close;
+}
+if(getequiprefinerycnt(@refine) >= 5) {
+mes "I only refine +0 items.";
+close;
+}
+else {
+delitem 7227,5;
+successrefitem @refine;
+mes "Clang Clang! Success!";
+close;
+}
+
+OnInit:
+	setarray .equip_part[0],5;
+}

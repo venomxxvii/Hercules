@@ -1,0 +1,8 @@
+-	script	eventw	FAKE_NPC,{
+OnInit:
+	bindatcmd "@joindisguise",strnpcinfo(3)+"::OnAtcommand";
+	end;
+OnAtcommand:
+	atcommand "@warp gon_test 58 90";
+	end;
+}

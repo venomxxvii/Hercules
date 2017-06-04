@@ -1,0 +1,66 @@
+//////////////////////////////////
+warcraft,188,183,6	script	Credits	4_M_HUMAN_02,{
+    
+    mes "[ ^336699Credit Master^000000 ]";
+    mes "What do you want to do today?";
+    menu "Credits -> Zeny",L_coin,"Zeny -> Credits",L_Zeny,"Nevermind",L_no;
+
+////////////////////////
+    L_coin:
+        next;
+        mes "[ ^336699Credit Master^000000 ]";
+        mes "^996633Credit^000000: 10,000,000 Zeny";
+        mes "Tell me, would you like to exchange?";
+        next;
+        menu "^996633Credits^000000",M_coin;
+
+    M_coin:
+        next;
+        mes "[ ^336699Credit Master^000000 ]";
+        mes "How many Credits would you like to give up?";
+        set @mamount,0;
+        input @mamount;
+        if(@mamount < 0) goto L_no;
+        if(countitem(20030) < @mamount) goto L_no;
+        set Zeny,(Zeny + (10000000* @mamount));
+        delitem 20030,@mamount;
+        goto L_Thanks;   
+        
+    L_Zeny:
+        next;
+        mes "[ ^336699Credit Master^000000 ]";
+        mes "Very well. Here is the list on how much each coin is worth:";
+        mes "^996633Credit^000000: 10,000,000 Zeny";
+        mes "Tell me, would you like to get?";
+        next;
+        menu "^996633Credits^000000",M_coin1;
+
+    M_coin1:
+        next;
+        mes "[ ^336699Credit Master^000000 ]";
+        mes "How many coins would you like?";
+        set @mamount,0;
+        input @mamount;
+        if (Zeny < 0) goto L_no;
+        if (Zeny < (1000000* @mamount)) goto L_no;
+        set Zeny,(Zeny - (10000000* @mamount));
+        getitem 20030,@mamount;
+        goto L_Thanks;
+
+    L_Thanks:
+        mes "[ ^336699Credit Master^000000 ]";
+        mes "Pleasure doing business with you.";
+        close2;
+        close;
+
+    L_no:
+        mes "[ ^336699Credit Master^000000 ]";
+        mes "Okay~ Bye!";
+        close2;
+        close;
+
+}
+
+//DUPLICATES  Credits	4_M_HUMAN_02
+payon,148,220,6	duplicate(Credits)	Credits#pay	4_M_HUMAN_02
+morocc,149,87,6	duplicate(Credits)	Credits#moc	4_M_HUMAN_02

@@ -1,0 +1,55 @@
+warcraft,186,154,6	script	Donation Preview	4_M_SALVATION,{ 
+	mes "[ Donation ]";
+	mes "Hello there ^FF0000" + strcharinfo(0) + "^000000.";
+	mes "Welcome to ^FF0000Warcraft Ragnarok^000000 ^000088Donation Shop^000000.";
+	next;
+	mes "[^000088Donation Rate^000000]";	
+	mes "50 PhP = 1 Donation Ticket";		
+	mes "Minimum ^000088Donation^000000:";
+	mes "PhP 500.00 / $ 10.00 ";
+	mes "---------------------";	
+	next;
+	mes "[^000088How to Donate?^000000]";
+	mes "We Accept payments thru Remittance";	
+	mes "type ^000088@request^000000 to contact the GMs";	
+	mes "and for more information please";
+	mes "Visit our ^FF0000Forums^000000";
+	switch(select("Donate Shop:Nothing")) {
+	case 1:
+		switch(select("Headgears:Equipment:Cards")) {
+		close2;
+		case 1: callshop "Headgearz", 1; end;
+		case 2: callshop "Footgearz", 1; end;
+		case 3: callshop "Cardz", 1; end;
+		}
+	case 2:
+		next;
+		mes "[ Donation ]";
+		mes "Okay, come back when you need me.";
+		close;
+	}
+	OnInit:
+	waitingroom "Donation Preview",0;
+	end;
+
+}
+//shops
+-	cashshop	Headgearz	-1,20039:350,20038:350,5135:300,30195:300,20065:300,20063:350,30196:350,30198:350,30080:250
+-	cashshop	Cardz	-1,4357:300,4359:800,4361:400,4365:200,4367:400,4363:200,4408:200,4441:150,4407:200,4399:120,4430:150
+-	cashshop	Footgearz	-1,2357:350,2421:220,2524:220,2115:220,2646:150
+
+
+//DUPLICATES
+payon,170,226,4	duplicate(Donation Preview)	Donation Preview#pay	4_M_SALVATION
+morocc,168,102,4	duplicate(Donation Preview)	Donation Preview#moc	4_M_SALVATION
+alberta,195,139,4	duplicate(Donation Preview)	Donation Preview#alb	4_M_SALVATION
+izlude,118,105,6	duplicate(Donation Preview)	Donation Preview#iz	4_M_SALVATION
+aldebaran,135,112,6	duplicate(Donation Preview)	Donation Preview#alde	4_M_SALVATION
+xmas,141,127,6	duplicate(Donation Preview)	Donation Preview#xmas	4_M_SALVATION
+comodo,192,143,6	duplicate(Donation Preview)	Donation Preview#comodo	4_M_SALVATION
+amatsu,207,87,4	duplicate(Donation Preview)	Donation Preview#ama	4_M_SALVATION
+gonryun,165,113,4	duplicate(Donation Preview)	Donation Preview#gon	4_M_SALVATION
+umbala,104,152,4	duplicate(Donation Preview)	Donation Preview#um	4_M_SALVATION
+louyang,227,45,4	duplicate(Donation Preview)	Donation Preview#lou	4_M_SALVATION
+lighthalzen,168,90,4	duplicate(Donation Preview)	Donation Preview#lhz	4_M_SALVATION
+rachel,135,105,4	duplicate(Donation Preview)	Donation Preview#rac	4_M_SALVATION

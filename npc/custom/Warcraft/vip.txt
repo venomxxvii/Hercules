@@ -1,0 +1,49 @@
+prt_in,44,115,4	script	Clahador	1_M_SIGN1,{
+function Pre;
+	 mes "[^FF0000Clahador^000000]";
+	 mes "Hello "+strcharinfo(0)+", I'm ^FF0000Clahador the butcher^000000.";
+	 mes "I will be of help if you need something.";
+	 next;
+	 mes "[^FF0000Clahador^000000]";
+	 mes "Oh! you need help?";
+	 mes "What kind of help do you need?";
+	 next;
+	 switch (select("Newbie here:I'm a ViP!:Nevermind")) {
+	 case 1:
+	 mes "[^FF0000Clahador^000000]";
+	 mes "Did you already claim your free items in the ^FF0000Freebies NPC^000000???";
+	 if (select("Sim:Não")==2) {				
+	 mes "[^FF0000Clahador^000000]";
+	 mes "You should get 'em!.";
+	 mes "It will help you on the start.";		
+	 mes "I will send you to the freebie giver.";		
+	 next;			
+	 warp "prontera",155,183;		
+	 }  
+	 else {		
+	 mes "[^FF0000Clahador^000000]";		
+	 mes "Haha, i hope you like those items.";	
+	 next;		
+	 mes "By the way, you can earn zennies through quests like going to daily quest, request board, and many more!";	
+	 mes "Did you know that you can have many zennies you want if you gonna hunt more rare items?";		
+	 mes "Try it!";	
+	 }		
+	 break;	
+	 case 2:	
+	 mes "[^FF0000Clahador^000000]";	
+	 mes "Oh you avail our ViP Ticket!";	
+	 mes "Thank you!";	
+	 next;	
+	 mes "[^FF0000Clahador^000000]";	
+	 mes "Your ^0055FFPremium Time^000000 Left : "+Pre( #Premium );	
+	 mes "You should maximize it";
+	 mes "Grind your skills and hunt now!";	
+	 break;	
+	 case 3:
+	 mes "[^FF0000Clahador^000000]";	
+	 mes "Thank you!";	
+	 mes "Come Again!";	
+	 break;	
+	 }	
+	 close;
+	 }

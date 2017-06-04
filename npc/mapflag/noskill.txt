@@ -33,7 +33,7 @@
 //================= Description ===========================================
 //= Disables all skills on the map.
 //=========================================================================
-
+market	mapflag	noskill
 //Prontera Arena ===============
 prt_are_in	mapflag	noskill
 

@@ -1562,7 +1562,7 @@ int battle_calc_skillratio(int attack_type, struct block_list *src, struct block
 					skillratio += 10 * skill_lv;
 					break;
 				case AL_HOLYLIGHT:
-					skillratio += 25;
+					skillratio += 40;
 					if (sc && sc->data[SC_SOULLINK] && sc->data[SC_SOULLINK]->val2 == SL_PRIEST)
 						skillratio *= 5; //Does 5x damage include bonuses from other skills?
 					break;
@@ -1924,6 +1924,9 @@ int battle_calc_skillratio(int attack_type, struct block_list *src, struct block
 				case SM_BASH:
 				case MS_BASH:
 					skillratio += 30 * skill_lv;
+					// If linked, super novices will have SM_BASH's ratio increased by 50%
+					if( sd->sc.data[SC_SOULLINK] && sd->sc.data[SC_SOULLINK]->val2 == SL_SUPERNOVICE )
+						skillratio += 50;
 					break;
 				case SM_MAGNUM:
 				case MS_MAGNUM:
@@ -1936,8 +1939,11 @@ int battle_calc_skillratio(int attack_type, struct block_list *src, struct block
 					skillratio += -50 + 8 * status_get_str(src);
 					break;
 				case AC_DOUBLE:
+					skillratio += 20;
 				case MA_DOUBLE:
 					skillratio += 10 * (skill_lv-1);
+					if (sc && sc->data[SC_SOULLINK] && sc->data[SC_SOULLINK]->val2 == SL_ROGUE)
+						skillratio *= 3;
 					break;
 				case AC_SHOWER:
 				case MA_SHOWER:
@@ -2068,10 +2074,15 @@ int battle_calc_skillratio(int attack_type, struct block_list *src, struct block
 					skillratio += 80 * skill_lv + 100;
 #else
 					skillratio += 40 * skill_lv;
+				 if (sc && sc->data[SC_SOULLINK] && sc->data[SC_SOULLINK]->val2 == SL_ALCHEMIST)
+					 skillratio *= 2;
 #endif
 					break;
 				case MO_FINGEROFFENSIVE:
 					skillratio+= 50 * skill_lv;
+					// If linked, monks will have MO_FINGEROFFENSIVE's ratio increased by 15%
+					if( sd->sc.data[SC_SOULLINK] && sd->sc.data[SC_SOULLINK]->val2 == SL_MONK )
+						skillratio += 15;
 					break;
 				case MO_INVESTIGATE:
 					skillratio += 75 * skill_lv;
@@ -2127,6 +2138,9 @@ int battle_calc_skillratio(int attack_type, struct block_list *src, struct block
 					break;
 				case CG_ARROWVULCAN:
 					skillratio += 100 + 100 * skill_lv;
+					// If linked, bards/dancers will have CG_ARROWVULCAN's damage increased by 15%
+					if( sd->sc.data[SC_SOULLINK] && sd->sc.data[SC_SOULLINK]->val2 == SL_BARDDANCER )
+						skillratio += 15;
 					break;
 				case AS_SPLASHER:
 					skillratio += 400 + 50 * skill_lv;
@@ -2147,9 +2161,11 @@ int battle_calc_skillratio(int attack_type, struct block_list *src, struct block
 					break;
 				case PA_SHIELDCHAIN:
 					skillratio += 30 * skill_lv;
+					if (sc && sc->data[SC_SOULLINK] && sc->data[SC_SOULLINK]->val2 == SL_CRUSADER)
+						skillratio *= 2;
 					break;
 				case WS_CARTTERMINATION:
-					i = 10 * (16 - skill_lv);
+					i = 9 * (16 - skill_lv);
 					if (i < 1) i = 1;
 					//Preserve damage ratio when max cart weight is changed.
 					if(sd && sd->cart_weight)
@@ -5263,7 +5279,7 @@ struct Damage battle_calc_weapon_attack(struct block_list *src,struct block_list
 			case AS_SONICBLOW:
 				if (sc && sc->data[SC_SOULLINK] &&
 					sc->data[SC_SOULLINK]->val2 == SL_ASSASIN)
-					ATK_ADDRATE(map_flag_gvg(src->m)?25:100); //+25% dmg on woe/+100% dmg on nonwoe
+					ATK_ADDRATE(map_flag_gvg(src->m)?30:30); //+30% dmg on woe/+30% dmg on nonwoe
 
 				if(sd && pc->checkskill(sd,AS_SONICACCEL)>0)
 					ATK_ADDRATE(10);
@@ -5626,7 +5642,7 @@ struct Damage battle_calc_weapon_attack(struct block_list *src,struct block_list
 				if ((sstatus->hp * 100) <= (sstatus->max_hp * 20))
 					hp = sstatus->hp;
 			} else
-				hp = 2*hp/100; //2% hp loss per hit
+				hp = 0*hp/100; //2% hp loss per hit
 			status_zap(src, hp, 0);
 		}
 		status_change_end(src,SC_CAMOUFLAGE, INVALID_TIMER);

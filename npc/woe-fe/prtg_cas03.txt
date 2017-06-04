@@ -111,6 +111,7 @@ prtg_cas03,165,201,4	duplicate(InsideFlagsPR3)	Fadhgridh#14	GUILD_FLAG
 
 //== Guild Flag (Town) =====================================
 prontera,143,203,2	duplicate(InsideFlagsPR3)	Fadhgridh#15	GUILD_FLAG
+warcraft,217,207,6	duplicate(InsideFlagsPR3)	Fadhgridh#16	GUILD_FLAG
 
 //== Kafra Employee ========================================
 prtg_cas03,181,215,4	duplicate(guildkafra)	Kafra Staff#prtg_cas03	4_F_KAFRA1

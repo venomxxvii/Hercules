@@ -1,0 +1,165 @@
+//4_F_ZONDAGIRL
+warcraft,215,170,3	script	Guild Package	4_M_EIN_SOLDIER,{	
+.@req_online = 10; // how many players need to online to claim. 
+.@req_lv = 255; // minimum level of .@online players that has to be. 
+mes "[ ^007fffGuild Package^000000 ]";
+mes "Hello, I'm incharge for the Guild Package!";
+mes "Here are the Requirements:";
+mes "10 Members must be online to be able get our server Guild Package";
+mes "All members must be level 255";
+mes "^ff0000(Minimum of 15 Members)^000000";
+mes "^ff0000WARNING! WARNING! WARNING!^000000";
+mes "^ff0000Same IP Detection/Abuser^000000";
+mes "^ff0000@autoban :) Goodluck!!~^000000";
+next;
+mes "[ ^007fffGuild Package^000000 ]";
+mes "^007fff--- Guild Leader ---^000000";
+mes "- ^ff0000100x^000000 ^009a4dBerry Box^000000";
+mes "- ^ff000050x^000000 ^009a4dBox of Thunder Box^000000";
+mes "- ^ff000050x^000000 ^009a4dPoison Bottle Box^000000";
+mes "- ^ff00002x^000000 ^009a4dTurtle General Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dGhostring Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dThara Frog Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dOrc Hero Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dEvil Snake Lord Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00002x^000000 ^009a4dPhreeoni Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dRaydric Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dGeneral Egnigem Cenia Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dSilver Valkyrie Helm^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dHollow Mask^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dSilver Valkyrie Armor^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dSilver Valkyrie Manteau^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dSilver Valkyrie Shield^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dSilver Valkyrie Shoes^000000 ^ff8000(Bound)^000000";
+mes "- ^ff0000500x^000000 ^009a4dSuperb Fish Slice^000000 ^ff8000(Bound)^000000";
+mes "- ^ff000050^000000 ^009a4dCredits^000000";
+mes "- ^ff0000500^000000 ^009a4dVoting Proof Ticket^000000";
+next;
+mes "[ ^007fffGuild Package^000000 ]";
+mes "^007fff-- Each Member --^000000";
+mes "- ^ff000050x^000000 ^009a4dBerry Box^000000";
+mes "- ^ff000050x^000000 ^009a4dBox of Thunder Box^000000";
+mes "- ^ff000050x^000000 ^009a4dPoison Bottle Box^000000";
+mes "- ^ff00002x^000000 ^009a4dTurtle General Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dGhostring Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dThara Frog Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dOrc Hero Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dEvil Snake Lord Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dRaydric Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00002x^000000 ^009a4dPhreeoni Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dGeneral Egnigem Cenia Card^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dSilver Valkyrie Helm^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dHollow Mask^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dSilver Valkyrie Armor^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dSilver Valkyrie Manteau^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dSilver Valkyrie Shield^000000 ^ff8000(Bound)^000000";
+mes "- ^ff00001x^000000 ^009a4dSilver Valkyrie Shoes^000000 ^ff8000(Bound)^000000";
+mes "- ^ff0000500x^000000 ^009a4dSuperb Fish Slice^000000 ^ff8000(Bound)^000000";
+mes "- ^ff000050^000000 ^009a4dCredits^000000";
+mes "- ^ff0000500^000000 ^009a4dVoting Proof Ticket^000000";
+next;
+if ( !getcharid(2) ) 
+{		
+mes "[ Guild Package ]";
+mes "You must have a guild";		
+close;	
+}	
+if ( getguildmasterid( getcharid(2) ) != getcharid(0) ) 
+{		
+mes "[ Guild Package ]";
+mes "You are not a Guild Leader";		
+close;	
+}	
+getguildmember getcharid(2), 1;	
+getguildmember getcharid(2), 2;	
+for ( .@i = 0; .@i < $@guildmembercount; .@i++ )		
+if ( isloggedin( $@guildmemberaid[.@i], $@guildmembercid[.@i] ) )			
+.@online++;	if ( .@online < .@req_online ) 
+{		
+mes "[ Guild Package ]";
+mes "Your Guild must have "+ .@req_online +" guild members online";		
+close;	
+}	
+	.@origin = getcharid(3);	
+		for ( .@i = 0; .@i < $@guildmembercount; .@i++ ) 
+	{		
+		if ( isloggedin( $@guildmemberaid[.@i], $@guildmembercid[.@i] ) ) 
+		{			
+			attachrid $@guildmemberaid[.@i];			
+			if ( BaseLevel < .@req_lv ) 
+		{				
+			.@deny_name$[.@c] = strcharinfo(0);				
+			.@c++;			
+		}		
+	}	
+}	attachrid .@origin;	if ( .@c ) 
+		{		
+			mes "[ Guild Package ]";
+			mes "^ff0000"+ .@c +"^000000 of your Guild member does not meet the ^ff0000255^000000 level requirement";		
+			mes implode( .@deny_name$, "," );		
+			close;	
+		}	
+			for ( .@i = 0; .@i < $@guildmembercount; .@i++ ) 
+		{		
+			if ( isloggedin( $@guildmemberaid[.@i], $@guildmembercid[.@i] ) ) 
+			{			
+				attachrid $@guildmemberaid[.@i];			
+				if ( #guild_package_claimed ) 
+				{				
+				.@deny_name$[.@c] = strcharinfo(0);				
+				.@c++;			
+				}		
+			}	
+		}	
+		attachrid .@origin;	if ( .@c ) 
+		{		
+		mes "[ Guild Package ]";
+		mes "there are "+ .@c +" members already claimed this package within their account";		
+		mes implode( .@deny_name$, "," );		
+		close;	
+		}	if ( query_sql( "select account_id as aaa, ( select last_ip from login where account_id = aaa ) as last_ip from guild_member where guild_id = "+ getcharid(2) +" group by last_ip", .@aid, .@ip$ ) < .@req_online ) 
+		{		
+		mes "[ Guild Package ]";
+		mes "same ip detected";		
+		.@nb = query_sql( "select name, account_id as aaa, ( select last_ip from login where account_id = aaa ) as last_ip from guild_member where guild_id = "+ getcharid(2), .@name$, .@aid, .@ip$ );		
+		for ( .@i = 0; .@i < .@nb; .@i++ )			
+		mes "[ Guild Package ]";
+		mes (.@i +1)+". "+ .@name$[.@i] +" ("+ .@ip$ +")";		
+		next;	
+		}	
+		mes "[ Guild Package ]";
+		mes "Congratulations! Your Gpack has been claimed!";	for ( .@i = 0; .@i < $@guildmembercount; .@i++ ) 
+		{		
+		if ( isloggedin( $@guildmemberaid[.@i], $@guildmembercid[.@i] ) ) 
+		{			
+		attachrid $@guildmemberaid[.@i];			
+		if ( getguildmasterid( getcharid(2) ) != $@guildmembercid[.@i] )	
+		getitembound 13517,100,1; // Yggberry Box	
+		else
+		getitembound 13517,50,1; // Yggberry Box
+		getitembound 14524,500,1; //SUPER B	
+		getitem 7227,500; // Voting Proof Ticket
+		getitem 20030,50; // Credits
+		getitembound 30110,50,1; // Box Of Thunder Box
+		getitembound 13973,50,1; // EDP Box
+		getitembound 4305,2,1; // Turtle
+		getitembound 4121,2,1; // Phreeoni
+		getitembound 4047,1,1; // Ghostring
+		getitembound 4352,1,1; // Gen Egnihem
+		getitembound 4058,1,1; //Thara Frog
+		getitembound 4143,1,1; //ORC HERO
+		getitembound 4330,1,1;//ESL
+		getitembound 4133,1,1; //Raydric
+		getitembound 20023,1,1; //Hollow
+		getitembound 20009,1,1; //SilverV
+		getitembound 20008,1,1; //SilverV
+		getitembound 20007,1,1; //SilverV
+		getitembound 20006,1,1; //SilverV
+		#guild_package_claimed = 1;		
+		}	
+	}	
+	attachrid .@origin;	close;
+OnInit:
+waitingroom "Guild Package? Claim it now!",0;
+end;	
+}

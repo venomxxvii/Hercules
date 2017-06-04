@@ -1,0 +1,11 @@
+-	script	news	FAKE_NPC,{
+	end;
+	
+OnInit:
+	// CHAT[PUB]
+	setcell "warcraft",195,146,195,200,cell_nochat,1;
+	setcell "warcraft",216,146,216,200,cell_nochat,1;
+	//VENDING
+	setcell "warcraft",195,146,195,200,cell_novending,1;
+	setcell "warcraft",216,146,216,200,cell_novending,1;
+}

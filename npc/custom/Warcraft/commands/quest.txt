@@ -1,0 +1,8 @@
+-	script	questw	FAKE_NPC,{
+OnInit:
+	bindatcmd "quest",strnpcinfo(3)+"::OnAtcommand";
+	end;
+OnAtcommand:
+	atcommand "@warp prt_in 42 105";
+	end;
+}

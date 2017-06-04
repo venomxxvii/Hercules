@@ -1,0 +1,110 @@
+src/map/atcommand.c | 29 +++++++++++++++++++++++++++++
+ src/map/battle.c    |  4 ++++
+ src/map/pc.c        |  1 +
+ src/map/pc.h        |  2 ++
+ 4 files changed, 36 insertions(+)
+
+diff --git a/src/map/atcommand.c b/src/map/atcommand.c
+index 4a4487c..7f95b05 100644
+--- a/src/map/atcommand.c
++++ b/src/map/atcommand.c
+@@ -5209,6 +5209,34 @@ static void get_jail_time(int jailtime, int* year, int* month, int* day, int* ho
+ 	return true;
+ }
+ 
++ACMD(pkmode) {
++
++	unsigned int tick = iTimer->gettick();
++
++	nullpo_retr(-1, sd);
++	
++	if( map[sd->bl.m].flag.pvp || map[sd->bl.m].flag.gvg || map[sd->bl.m].flag.gvg_castle || map[sd->bl.m].flag.gvg_dungeon ) {
++		clif->message(sd->fd, "You can only change your PK state on non-PVP maps.");
++		return false;
++	}
++
++	if(DIFF_TICK(sd->pk_mode_tick,tick) > 0){ //check the delay before use this command again
++		clif->message(sd->fd, "You cannot turn OFF your PK state twice within just 15 minutes.");
++		return false;
++		}
++else{
++	if (!sd->state.pk_mode) {
++		sd->state.pk_mode = 1;
++		clif->message(sd->fd, "Your PK state is now OFF");
++		sd->pk_mode_tick = tick + 0; //set the delay here
++	} else {
++		sd->state.pk_mode = 0;
++		clif->message(sd->fd, "Your PK state is now ON");
++		sd->pk_mode_tick = tick + 1500000; //set the delay here
++	}
++}
++	return true;
++}
+ 
+ /*==========================================
+  * @dropall by [MouseJstr]
+@@ -9646,6 +9674,7 @@ void atcommand_basecommands(void) {
+ 		ACMD_DEF(jail),
+ 		ACMD_DEF(unjail),
+ 		ACMD_DEF(jailfor),
++		ACMD_DEF2("pk",pkmode),
+ 		ACMD_DEF(jailtime),
+ 		ACMD_DEF(disguise),
+ 		ACMD_DEF(undisguise),
+
+diff --git a/src/map/battle.c b/src/map/battle.c
+index 4a31a97..13241657 100644
+--- a/src/map/battle.c
++++ b/src/map/battle.c
+@@ -5903,6 +5903,8 @@ int battle_check_target( struct block_list *src, struct block_list *target,int f
+ 
+ 			if( sd->state.monster_ignore && flag&BCT_ENEMY )
+ 				return 0; // Global inminuty only to Attacks
++			if( map[m].flag.pvp && sd->state.pk_mode && flag&BCT_ENEMY && s_bl->type != BL_MOB )
++				return 0;
+ 			if( sd->status.karma && s_bl->type == BL_PC && ((TBL_PC*)s_bl)->status.karma )
+ 				state |= BCT_ENEMY; // Characters with bad karma may fight amongst them
+ 			if( sd->state.killable ) {
+@@ -5968,6 +5970,8 @@ int battle_check_target( struct block_list *src, struct block_list *target,int f
+ 					else
+ 						return 0; // You can't target anything out of your duel
+ 				}
++				else if( map[m].flag.pvp && sd->state.pk_mode && t_bl->type != BL_MOB )
++					return 0;
+ 			}
+ 			if( map_flag_gvg(m) && !sd->status.guild_id && t_bl->type == BL_MOB && ((TBL_MOB*)t_bl)->class_ == MOBID_EMPERIUM )
+ 				return 0; //If you don't belong to a guild, can't target emperium.
+
+diff --git a/src/map/pc.c b/src/map/pc.c
+index 044e555..edcd9f1 100644
+--- a/src/map/pc.c
++++ b/src/map/pc.c
+@@ -638,6 +638,7 @@ int pc_setnewpc(struct map_session_data *sd, int account_id, int char_id, int lo
+ 	sd->state.active = 0; //to be set to 1 after player is fully authed and loaded.
+ 	sd->bl.type      = BL_PC;
+ 	sd->canlog_tick  = iTimer->gettick();
++	sd->pk_mode_tick = iTimer->gettick();
+ 	//Required to prevent homunculus copuing a base speed of 0.
+ 	sd->battle_status.speed = sd->base_status.speed = DEFAULT_WALK_SPEED;
+ 	return 0;
+
+diff --git a/src/map/pc.h b/src/map/pc.h
+index 7db5c2f..2bb7749 100644
+--- a/src/map/pc.h
++++ b/src/map/pc.h
+@@ -167,6 +167,7 @@ struct map_session_data {
+ 		unsigned int prerefining : 1;
+ 		unsigned int workinprogress : 3; // 1 = disable skill/item, 2 = disable npc interaction, 3 = disable both
+ 		unsigned int hold_recalc : 1;
++		unsigned int pk_mode : 1;
+ 	} state;
+ 	struct {
+ 		unsigned char no_weapon_damage, no_magic_damage, no_misc_damage;
+@@ -233,6 +234,7 @@ struct map_session_data {
+ 	unsigned int canskill_tick; // used to prevent abuse from no-delay ACT files
+ 	unsigned int cansendmail_tick; // [Mail System Flood Protection]
+ 	unsigned int ks_floodprotect_tick; // [Kill Steal Protection]
++	unsigned int pk_mode_tick;
+ 	struct {
+ 		short nameid;
+ 		unsigned int tick;

@@ -1,0 +1,39 @@
+warcraft,208,186,4	script	Warc	4_VENDING_MACHINE,{
+if( !#Rewardzz ){
+mes "[ ^FF0000Warc^000000 ]";
+mes "Hello " + strcharinfo(PC_NAME) + ", Welcome to a ^0000EERagnarok Private Server^000000.";
+next;
+mes "[ ^FF0000Warc^000000 ]";
+mes "Our team have a little reward for you! please take this things with ya.";
+mes "fsch~!! *something broke*";
+next;
+mes "[ ^FF0000Warc^000000 ]";
+mes "Bz bz bz, Bz bz bzBz bz bz, bz..";
+mes "      ";
+mes "Bzz bzz bzzz, free stuffs, bzz..";
+mes "Bz bz bz, Bz bz bzBz bz bz, bz..";
+mes "      ";
+mes ".....";
+switch(select("Grabz candy! Free Stuff!!")){
+case 1:
+next;
+mes "[ ^FF0000Warc^000000 ]";
+mes	"Just kidding!~ Here ya gooo!!";
+mes	"I guarantee you, this thangz will help you to your adventure.";
+next;
+getitembound 7227,1000,1;
+set #Rewardzz,1;
+next;
+mes "[ ^FF0000Warc^000000 ]";
+mes	"Goodluck on your adventures!!";
+close;
+}
+}else{
+mes "[ ^FF0000Warc^000000 ]";
+mes "You have claim the Reward already.";
+close;
+}
+OnInit:
+	waitingroom "Insert Coin",0;
+	end;
+}

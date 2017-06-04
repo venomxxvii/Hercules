@@ -1,0 +1,14 @@
+-	script	resvendchat	FAKE_NPC,{
+OnInit:
+	setcell "warcraft",198,176,213,195,cell_nochat,1;
+	setcell "warcraft",198,176,213,195,cell_novending,1;
+	setcell "warcraft",200,161,211,175,cell_nochat,1;
+	setcell "warcraft",200,161,211,175,cell_novending,1;
+	setcell "warcraft",192,146,198,175,cell_nochat,1;
+	setcell "warcraft",192,146,198,175,cell_novending,1;
+	setcell "warcraft",213,146,234,175,cell_nochat,1;
+	setcell "warcraft",213,146,234,175,cell_novending,1;
+	setcell "market",85,96,115,126,cell_nochat,1;
+	setcell "warcraft",85,96,115,126,cell_novending,1;
+end;
+}

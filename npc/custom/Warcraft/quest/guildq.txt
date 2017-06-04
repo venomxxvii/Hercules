@@ -1,0 +1,55 @@
+prt_in,44,115,4	script	Guild Asssistance	4_F_KAFRA5,{
+mes "[^0000FF Guild Assistance ^000000]";
+mes "I'm here to help you create a guild!!";
+mes "You need to have a ^FF0000Guild Permit^000000  to make guild.";
+next;
+mes "[^0000FF Guild Assistance ^000000]";
+mes "Would you like to have ^FF0000Guild Permit^000000?";
+menu "Yes!",-,"No, I'm not good enough.",L_ayaw;
+next;
+mes "[^0000FF Guild Assistance ^000000]";
+mes "First you must bring me the following items i will need";
+mes "To write you a ^FF0000Guild Permit^000000.";
+next;
+mes "[^0000FF Guild Assistance ^000000]";
+mes "Bring me: ";
+mes "5 ^0000FFCredits^000000";
+mes "1 ^0000FFMummy Card^000000";
+mes "1 ^0000FFSohee card^000000";
+mes "1 ^0000FFOrc Warrior Card^000000";
+mes "1 ^0000FFHorong Card^000000";
+next;
+mes "[^0000FF Guild Assistance ^000000]";
+mes "I will be waiting for you!";
+if(countitem(20030) < 5 || countitem(4103) < 1 || countitem(4106) < 1 || countitem(4100) < 1 || countitem(4066) < 1) goto nidesa;
+if(countitem(20030) >= 5 || countitem(4103) >= 1 || countitem(4106) >= 1 || countitem(4100) >= 1 || countitem(4066) >= 1) goto galengs;
+close;
+L_ayaw:
+
+mes "[^0000FF Guild Assistance ^000000]";
+mes "Just speak to me if you need it already";
+close;
+
+
+nidesa:
+next;
+mes "[^0000FF Guild Assistance ^000000]";
+mes "One missing material check your inventory carefully.";
+close;
+galengs:
+next;
+mes "[^0000FF Guild Assistance ^000000]";
+mes "Very well done, you have obtain the materials i need to make you ^FF0000Guild Permit^000000 .";
+delitem 20030,5;
+delitem 4103,1;
+delitem 4106,1;
+delitem 4100,1;
+delitem 4066,1;
+next;
+getitem 7418,1;
+next;
+mes "[^0000FF Guild Assistance ^000000]";
+mes "Be careful using it, you can only use it once!!";
+mes "( Usage /guild ^FF0000Guild Name^000000 )";
+close;
+}

@@ -1,0 +1,22 @@
+warcraft,193,179,6	script	Market	4_BOARD3,{
+	mes "Hello, I can warp you to our market area!";
+	while (1) {
+	switch(select("Yes Please!", "No Thanks.")) {
+	case 1:
+	warp "market",100,112;
+	end;
+	case 2:
+	mes "Okay bye~";
+	close;
+	}
+}
+}
+
+//The Exit to Prontera
+
+market,108,115,4	script	Exitx	4_BOARD3,{
+	warp "warcraft" ,206,194;
+OnInit:
+waitingroom "Exit",0,0;
+
+}

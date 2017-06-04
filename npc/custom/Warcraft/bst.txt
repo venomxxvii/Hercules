@@ -1,0 +1,40 @@
+-	script	bst	FAKE_NPC,{
+	OnCommand:
+    if ( !getstrlen( .@atcmd_parameters$ ) ) {
+	message strcharinfo(0), "Please, enter a message (usage: @bst <message>).";
+	end;
+    }
+
+	if (agitcheck()){
+	message strcharinfo(0),  "Unable to use this command,";
+	message strcharinfo(0),  "War of Emperium is ongoing!";
+	close;
+	}
+
+    $@input$ = implode(.@atcmd_parameters$," " );
+    $@name$ = strcharinfo(0);
+    .@symbol$ = substr( .@atcmd_parameters$, 0,1 );
+    if ( .@symbol$ != "B>" && .@symbol$ != "S>" && .@symbol$ != "T>" ) {
+	message strcharinfo(0), "Market symbol is needed when using this command.";
+	message strcharinfo(0), "B> : Buying Symbol";
+	message strcharinfo(0), "S> : Selling Symbol";
+	message strcharinfo(0), "T> : Trading Symbol";
+	end;
+    }
+    if ( bst_delay + 120 > gettimetick(2) ) {
+	message strcharinfo(0), "There is a 120 seconds delay of using this command again";
+	end;
+    }
+	query_sql ("SELECT `char`.`account_id` FROM `char` JOIN `login` ON `char`.`account_id` = `login`.`account_id` WHERE `char`.`online` = 1", .@account_id);
+	bst_delay = gettimetick(2); // delay
+	while ( .@i < getarraysize(.@account_id) ) {
+	if ( attachrid( .@account_id[.@i] ) )
+	dispbottom "[ Market ] " + $@name$ + " : " + $@input$,0xFFD700; // display to every character on the server.
+	detachrid;
+	.@i++;
+	}
+	end;
+	OnInit:
+    bindatcmd "bst",strnpcinfo(0)+"::OnCommand", 0, 1; // bind @bst command.
+    end;
+	}

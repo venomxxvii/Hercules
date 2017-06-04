@@ -76,7 +76,7 @@
  * since it is a very bad idea.
  * Please note that NO SUPPORT will be given if you uncomment the following line.
  */
-//#define I_AM_AWARE_OF_THE_RISK_AND_STILL_WANT_TO_RUN_HERCULES_AS_ROOT
+#define I_AM_AWARE_OF_THE_RISK_AND_STILL_WANT_TO_RUN_HERCULES_AS_ROOT
 // And don't complain to us if the XYZ plugin you installed wiped your hard disk, or worse.
 // Note: This feature is deprecated, and should not be used.
 

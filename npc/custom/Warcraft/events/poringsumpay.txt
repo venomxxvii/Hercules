@@ -1,0 +1,123 @@
+//===== Hercules Script =======================================
+//= Poring Summoner
+//===== Created By: ===========================================
+//= Mysterious
+//===== Current Version: ======================================
+//= 1.2
+//===== Link: =================================================
+//= Old - http://www.eathena.ws/board/index.php?showtopic=236779
+//===== Description: ==========================================
+//= Basically what this event does is summon a set of Normal
+//= and Special Porings. Normal Porings don't drop anything,
+//= Special Porings do.
+//=============================================================
+warcraft,216,242,5	script	Poring Summoners P	2_M_DYEINGER,{
+	mes "[Poring Summoner]";
+	if ( getgmlevel() < 10 ) {
+		if ( .Event )
+			mes "There is no Poring Summon Event on now.";
+		else {
+			mes "There is a Poring Summon Event on now!";
+			mes "Location: " + .Map$;
+			mes "Special Porings: " + .SpecialPorings;
+			mes "Normal Porings: " + .NormalPorings;
+		}
+		close;
+	}
+	mes "Please customize the Poring Summon Event:";
+	next;
+Main:
+	mes "[Poring Summoner]";
+	switch ( select (
+		"Item [" + getitemname($poring_summon_ItemID) + "]",
+		"Special Porings [" + $poring_summon_Special + "]",
+		"Normal Porings [" + $poring_summon_Normal + "]:Start Event:End Event" ) ) {
+	case 1:
+		mes "Which item would you like Special Porings to drop?";
+		mes "Please input the item ID:";
+		input .@itemid;
+		if ( getitemname( .@itemid ) == "null" ) {
+			mes "invalid item ID";
+			next;
+			goto Main;
+		}
+		$poring_summon_ItemID = .@itemid;
+		next;
+		goto Main;
+	case 2:
+		mes "How many Special Porings would you like me to summon?";
+		input $poring_summon_Special, 1, 1000;
+		next;
+		goto Main;
+	case 3:
+		mes "How many Normal Porings would you like me to summon?";
+		input $poring_summon_Normal, 1, 1000;
+		next;
+		goto Main;
+	case 4:
+		mes "Starting the event now...";
+		donpcevent strnpcinfo(0) +"::OnStartEvent";
+		close;
+	case 5:
+		mes "Ending the event now...";
+		donpcevent strnpcinfo(0) +"::OnEndEvent";
+		close;
+	}
+	close;
+OnStartEvent:
+OnHour03: //CHANGE THIS TO THE HOUR YOU WOULD LIKE THIS EVENT TO LOAD!
+//OnHour05:
+//OnHour09:
+//OnHour14:
+//OnHour17:
+//OnHour20:
+//OnHour23:
+	.Map$ = "payon";
+	.Event = true;
+	.SpecialPorings = $poring_summon_Special;
+	.NormalPorings = $poring_summon_Normal;
+	monster .Map$, 0,0, "Poring", 1002, .SpecialPorings, "Poring Summoner::OnSpecialKill";
+	monster .Map$, 0,0, "Poring", 1002, .NormalPorings, "Poring Summoner::OnNormalKill";
+	announce "The Poring Event has begun!",bc_all;
+	announce "Location: " + .Map$,bc_all;
+	announce "Special Porings: " + .SpecialPorings, bc_all;
+	announce "Normal Porings: " + .NormalPorings, bc_all;
+	initnpctimer;
+	end;
+OnEndEvent:
+	if ( .Event )
+		announce "The Poring Summon Event is now over!", bc_all;
+	killmonster .Map$, "payon";
+	.Event = false;
+	end;
+//OnTimer216000000: .. LOL 6 hours
+OnTimer1800000:
+	announce "Poring Summoner has ended. No one killed the Porings.", bc_all;
+	killmonster .Map$, "All";
+	.Event = false;
+	stopnpctimer;
+	end;
+
+OnNormalKill:
+	.NormalPorings--;
+	goto PoringCount;
+OnSpecialKill:
+	.SpecialPorings--;
+	announce strcharinfo(0) + " got a " + getitemname($poring_summon_ItemID) + "!", bc_map;
+	getitem $poring_summon_ItemID, 3;
+	goto PoringCount;
+PoringCount:
+	announce "Special Porings: " + .SpecialPorings + " || Normal Porings: " + .NormalPorings, bc_map;
+	if ( !.SpecialPorings )
+		goto OnEndEvent;
+	end;
+OnInit:
+	bindatcmd "poringsumpay", strnpcinfo(0)+"::OnStartEvent", 99,100;
+	bindatcmd "poringsumpayend", strnpcinfo(0)+"::OnEndEvent", 99,100;
+	if ( !$poring_summon_ItemID && !$poring_summon_Special && !$poring_summon_Normal ) { // initialize the value
+		$poring_summon_ItemID = 7227;
+		$poring_summon_Special = 1000;
+		$poring_summon_Normal = 1000;
+	}
+	end;
+}

@@ -5293,8 +5293,8 @@ int skill_castend_id(int tid, int64 tick, int id, intptr_t data)
 			)
 				sc->data[SC_SOULLINK]->val3 = 0; //Clear bounced spell check.
 
-			if( sc->data[SC_DANCING] && skill->get_inf2(ud->skill_id)&INF2_SONG_DANCE && sd )
-				skill->blockpc_start(sd,BD_ADAPTATION,3000);
+//			if( sc->data[SC_DANCING] && skill->get_inf2(ud->skill_id)&INF2_SONG_DANCE && sd )
+//				skill->blockpc_start(sd,BD_ADAPTATION,3000);
 		}
 
 		if( sd && ud->skill_id != SA_ABRACADABRA && ud->skill_id != WM_RANDOMIZESPELL ) // they just set the data so leave it as it is.[Inkfish]
@@ -14353,10 +14353,16 @@ int skill_check_condition_castbegin(struct map_session_data* sd, uint16 skill_id
 		return 0;
 	}
 
-	if( require.weapon && !pc_check_weapontype(sd,require.weapon) ) {
+	if( skill_id != LK_PARRYING && require.weapon && !pc_check_weapontype(sd,require.weapon)) {
 		clif->skill_fail(sd,skill_id,USESKILL_FAIL_THIS_WEAPON,0);
-		return 0;
+        return 0;
 	}
+	if( skill_id == LK_PARRYING && !sd->sc.data[SC_SOULLINK] && require.weapon && !pc_check_weapontype(sd,require.weapon)) {
+		clif->skill_fail(sd,skill_id,USESKILL_FAIL_THIS_WEAPON,0);
+        return 0;
+	}
+	if( skill_id == LK_PARRYING && sd->sc.data[SC_SOULLINK]) {
+    }
 
 	if( require.sp > 0 && st->sp < (unsigned int)require.sp) {
 		clif->skill_fail(sd,skill_id,USESKILL_FAIL_SP_INSUFFICIENT,0);
@@ -14533,11 +14539,16 @@ int skill_check_condition_castend(struct map_session_data* sd, uint16 skill_id, 
 		clif->skill_fail(sd,skill_id,USESKILL_FAIL_HP_INSUFFICIENT,0);
 		return 0;
 	}
-
-	if( require.weapon && !pc_check_weapontype(sd,require.weapon) ) {
+	if( skill_id != LK_PARRYING && require.weapon && !pc_check_weapontype(sd,require.weapon)) {
 		clif->skill_fail(sd,skill_id,USESKILL_FAIL_THIS_WEAPON,0);
-		return 0;
+        return 0;
 	}
+	if( skill_id == LK_PARRYING && !sd->sc.data[SC_SOULLINK] && require.weapon && !pc_check_weapontype(sd,require.weapon)) {
+		clif->skill_fail(sd,skill_id,USESKILL_FAIL_THIS_WEAPON,0);
+        return 0;
+	}
+	if( skill_id == LK_PARRYING && sd->sc.data[SC_SOULLINK]) {
+    }
 
 	if( require.ammo ) { //Skill requires stuff equipped in the arrow slot.
 		if((i=sd->equip_index[EQI_AMMO]) < 0 || !sd->inventory_data[i] ) {

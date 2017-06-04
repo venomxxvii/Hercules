@@ -1,0 +1,183 @@
+-	script	Dice#announcer	-1,{
+ OnInit:
+ disablenpc "prtevent";
+ hideonnpc "Dice#evnt1";
+ end
+ OnClock0613:
+ announce "Dice Guru: We are going to have a Dice event.",0;
+ sleep2 10000;
+ announce "Dice Guru: For those who wants to join, Please proceed Prontera 161 , 179 and enter the Warp Portal.",0;
+ sleep2 10000;
+ announce "Dice Guru: After 1 Minute the Portal will close.",0;
+ sleep2 10000;
+ announce "Dice Guru: So please go to Prontera 161 , 179 and enter the Warp Portal now if you want to join.",0;
+ enablenpc "prtevent";
+ initnpctimer;
+ end;
+ OnTimer30000: 
+ announce "Dice Guru: Last 30 seconds.",0;
+ sleep2 5000;
+ announce "Dice Guru: If you want to join please enter the Warp Portal in Prontera City 109 ,96.",0;
+ end;
+ OnTimer50000:
+ announce "Dice: Last 10 seconds.",0;
+ end;
+ OnTimer55000:
+ announce "Dice: 5.",0;
+ end;
+ OnTimer56000:
+ announce "Dice: 4.",0;
+ end;
+ OnTimer57000:
+ announce "Dice: 3.",0;
+ end;
+ OnTimer58000:
+ announce "Dice: 2.",0;
+ end;
+ OnTimer59000:
+ announce "Dice: 1.",0;
+ end;
+ OnTimer60000:
+ announce "Dice: Time's up.",0;
+ end;
+ OnTimer61000:
+ disablenpc "prtevent";
+ donpcevent "Dice#evnt1::OnEnable";
+ stopnpctimer;
+ end;
+ }
+ //--------------------------------------------------
+ prontera,161,179,0	warp	prtevent	2,2,quiz_01,204,90
+ //--------------------------------------------------
+ quiz_01,204,93,6	script	Dice#evnt1	715,{ 
+ //--------------------------------------------------
+ mes "[Dice]";
+ mes "Please tell me your name";
+ next;
+ input .@name$;
+ if(.@name$ != strcharinfo(0)) {
+ mes "[Dice]";
+ mes "Are you sure thats your character name?";
+ close;
+ }
+ mes "[Dice]";
+ mes "Congrats. You've won.";
+ close2;
+ announce "Dice: We have a winner, "+.@name$+".",0;
+ getitem 27000,1;
+ if (.rounds == 0) {
+ set .rounds, 1;
+ warp "prontera",155,147;
+ hideonnpc "Dice#evnt1";
+ }else{
+ warp "quiz_01",204,90;
+ mapwarp "gon_test", "quiz_01",204,90; //warps back to game
+ hideonnpc "Dice#evnt1";
+ donpcevent "Dice#evnt1::OnEnable";
+ }
+ end;
+ OnEnable:
+ set .rounds, .rounds - 1;
+ mapannounce "quiz_01","Dice: We are about to start the Dice event.",0;
+ sleep2 10000;
+ mapannounce "quiz_01","Dice: You MUST GO INSIDE THE BOX, because if you're caught standing on the stairs you'll be automatically disqualified.",0;
+ sleep2 10000;
+ mapannounce "quiz_01","Dice: That's it.. Now let's play...",0;
+ sleep2 10000;
+ goto L_Start;
+ end;
+ L_Start:
+ if(getmapusers("quiz_01") == 1) goto L_Champ;
+ if(getmapusers("quiz_01") == 0) goto L_None;
+ if(getmapusers("quiz_01") > 1) {        announce "Dice: . . . . .",0;
+ set $@number, rand(1,4);
+ sleep2 10000;
+ announce "Dice: I have a number now. Please go to the box of the number you want.... GO!",0;
+ sleep2 10000;
+ announce "Dice: 5",0;
+ sleep2 5000;
+ announce "Dice: 4",0;
+ sleep2 4000;
+ announce "Dice: 3",0;
+ sleep2 3000;
+ announce "Dice: 2",0;
+ sleep2 2000;
+ announce "Dice: 1",0;
+ sleep2 1000;
+ announce "Dice: Time's up.",0;
+ donpcevent "evnt#1::OnEnable";
+ announce "Dice: Winning number "+$@number+".",0;
+ if(($@number != 1) && ($@number != 2) && ($@number != 3)) goto L_Lose1;
+ if(($@number != 1) && ($@number != 2) && ($@number != 4)) goto L_Lose2;
+ if(($@number != 1) && ($@number != 3) && ($@number != 4)) goto L_Lose3;
+ if(($@number != 2) && ($@number != 3) && ($@number != 4)) goto L_Lose4;
+ end;
+ }
+ L_Lose1:
+ if (.rounds == 0) {
+ areawarp "quiz_01",183,81,191,59,"prontera",131,97;
+ areawarp "quiz_01",195,81,203,59,"prontera",131,97;
+ areawarp "quiz_01",207,81,215,59,"prontera",131,97;
+ }else{
+ areawarp "quiz_01",183,81,191,59,"gon_test",57,99;
+ areawarp "quiz_01",195,81,203,59,"gon_test",57,99;
+ areawarp "quiz_01",207,81,215,59,"gon_test",57,99;
+ }
+ goto L_Start;
+ end; L_Lose2:
+ if (.rounds == 0) {
+ areawarp "quiz_01",183,81,191,59,"prontera",131,97;
+ areawarp "quiz_01",195,81,203,59,"prontera",131,97;
+ areawarp "quiz_01",219,81,227,59,"prontera",131,97;
+ }else{
+ areawarp "quiz_01",183,81,191,59,"gon_test",57,99;
+ areawarp "quiz_01",195,81,203,59,"gon_test",57,99; 
+ areawarp "quiz_01",219,81,227,59,"gon_test",57,99;
+ }
+ goto L_Start;
+ end;
+ L_Lose3:
+ if (.rounds == 0) {
+ areawarp "quiz_01",183,81,191,59,"prontera",131,97;
+ areawarp "quiz_01",207,81,215,59,"prontera",131,97;
+ areawarp "quiz_01",219,81,227,59,"prontera",131,97;
+ }else{
+ areawarp "quiz_01",183,81,191,59,"gon_test",57,99;
+ areawarp "quiz_01",207,81,215,59,"gon_test",57,99;
+ areawarp "quiz_01",219,81,227,59,"gon_test",57,99;
+ }
+ goto L_Start;
+ end;
+ L_Lose4:
+ if (.rounds == 0) {
+ areawarp "quiz_01",195,81,203,59,"prontera",131,97;
+ areawarp "quiz_01",207,81,215,59,"prontera",131,97;
+ areawarp "quiz_01",219,81,227,59,"prontera",131,97;
+ }else{
+ areawarp "quiz_01",195,81,203,59,"gon_test",57,99;
+ areawarp "quiz_01",207,81,215,59,"gon_test",57,99;
+ areawarp "quiz_01",219,81,227,59,"gon_test",57,99;
+ }
+ goto L_Start;
+ end;
+ L_Champ:
+ mapannounce "quiz_01","Dice: Come to me and tell me your name.",0;
+ hideoffnpc "Dice#evnt1";
+ end;
+ L_None:
+ announce "No One Entered the Dice Event. Event Closed",0;
+ hideonnpc "Dice#evnt1";
+ end;
+ OnInit:
+ set .rounds, 3;
+ end;
+ }
+ -	script	evnt#1	FAKE_NPC,{
+ OnEnable:
+ areawarp "quiz_01",182,94,228,88,"prontera",109,97;
+ areawarp "quiz_01",185,87,188,82,"prontera",109,97;
+ areawarp "quiz_01",197,87,200,82,"prontera",109,97;
+ areawarp "quiz_01",209,87,212,82,"prontera",109,97;
+ areawarp "quiz_01",221,87,224,82,"prontera",109,97;
+ end;
+ }

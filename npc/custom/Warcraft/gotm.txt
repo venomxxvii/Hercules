@@ -1,0 +1,11 @@
+warcraft,206,190,4	script	Guild of The Month	GUILD_FLAG,{
+    mes "[Guild of the Month]";
+    mes "The Guild of the Month is the ^ff0000"+getguildname(.a)+"^000000 Guild";
+    mes "Their Guild Master is ^FF0000"+.b$+"^000000";
+    close;
+
+OnInit:
+    set .guild$, "+getguildname(.a)+";
+    query_sql("SELECT `guild_id`,`master` FROM `guild` WHERE `name` = '"+.guild$+"';",.a,.b$);
+    flagemblem .a;
+}

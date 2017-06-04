@@ -1,0 +1,587 @@
+// WoE setter. Preview version by jaBote.
+// TO-DO for release: NPC interface, improvements and fixes.
+
+/* This script uses some complex structures that aren't declared anywhere thanks to this scripting engine.
+ * Here is the structure of the WoE sessions along with a short comment for clarity's sake. Remember all of them are arrays!
+ * There's not a session num variabe here because we get our sessions already ordered by the SQL query. A given index defines a whole WoE session
+struct WoE_session { // Not an actual C struct, but take it as if it was one, just in case you know what they are. Else ignore this joke.
+	.start_day[];
+	.start_hour[];
+	.start_min[];
+	.duration[]; // In minutes. Shouldn't be greater than (a week - a minute = 10080-1 = 10079 minutes)
+	.alive_time[]; // Number of weeks this WoE session will last. 0 = forever.
+	.prtg[]; // A bitmask that contains the castles set per region
+	.payg[];
+	.gefg[];
+	.aldeg[];
+	.arug[];
+	.schg[];
+	.nguild[]; 
+	// .YOUR_CUSTOM_REGIONS[]; // Must all be set by yourself. Try to name them the same as in the .regions$ array.
+	// From start to here, they're all obtained via a SQL query. Next ones are processed from states and so
+	.end_day[]; // Calculated through .duration[]
+	.end_hour[];
+	.end_min[];
+	.active[]; // Will be set to 1 when the WoE is fired, 0 if session is inactive. Prevents launching the same session multiple times.
+}
+*/
+
+-	script	SetterTest	-1,{
+
+// Sets all basic configs and makes previous calculations for pretty much everything.
+OnInit: 
+// Basic configs
+	set .gm_access, 99; // Minimum GM level for administration purposes
+	set .announce, 1; // 0: No announcements; 1: NPC announces WoEs and active castles.
+	set .announce_crash, 1; // 0: disabled; 1: Will publicly announce to the server if there's been any problem during runtime, in addition to the mandatory debugmes and logmes. Reccommended since they wouldn't show up during regular runtime.
+	set .warp_serv, 0; // Set to 1 if you want this script to give free warp service to castles
+	set .install_sql, 0; // Want the script to try installing the table for you (only the basic one, not reccomended)? 1: Enabled; 0: Disabled
+	set .force_trigger, 0; // Want the script to force triggering WoEs that should have been started before loading the NPC (not reccomended)? 1: Enabled; 0: Disabled
+	
+// Optional configs
+	if (.warp_serv) { // Ignore this line. Also ignore its content if you set .warp_serv to 0
+		// Structure setarray .warps_%[0],x1,y1,x2,y2,x3,y3,x4,y4,x5,y5;
+		// %: Region numbers (0 = Prontera; 1 = Payon; 2 = Geffen; 3 = Al de Baran; 4 = Arunafeltz;
+		//                    5 = Schwartzvald; 6 = Novice guild; 7 or more = your customs)
+		// x1,y1: x and y coordinates of castle 1 in the region map (same for the other numbers)
+		//        if set to 0, you'll be warped to random positions on the map.
+		// Region maps are set in the constants section.
+		// Access: x = .warps_%[(2*num_castle)-2]; y = .warps_%[(2*num_castle)-1];
+		// example for castle 1 in region 0: x = .warps_0[(2*1)-2]; y = .warps_0[(2*1)-1];
+		setarray .warps_0[0],0,0,0,0,0,0,0,0,0,0;
+		setarray .warps_1[0],0,0,0,0,0,0,0,0,0,0;
+		setarray .warps_2[0],0,0,0,0,0,0,0,0,0,0;
+		setarray .warps_3[0],0,0,0,0,0,0,0,0,0,0;
+		setarray .warps_4[0],0,0,0,0,0,0,0,0,0,0;
+		setarray .warps_5[0],0,0,0,0,0,0,0,0,0,0;
+		setarray .warps_6[0],0,0,0,0,0,0,0,0; // Novice grounds has just 4 castles. Special checks will be made before warping people here
+		// Add your custom regions here.
+	}
+	
+// Constants. Do not change unless you know what you're doing.
+	
+	set .table_name$, "woe_setter";
+
+	// Region prefixes
+	setarray .regions$[0],"prtg","payg","gefg","aldeg","arug","schg","nguild"; // Add custom region prefixes postfixing this array
+
+	// Region info
+	setarray .region_names$[0],"Prontera", "Payon", "Geffen", "Aldebaran", "Arunafeltz", "Schwarzwald", "Novice Castles"; // Add custom region names postfixing this array
+	setarray .region_maps$[0],"prt_gld", "pay_gld", "gef_fild13", "alde_gld", "aru_gld", "sch_gld", "n_castle"; // Add custom region maps postfixing this array
+
+	// WoE castle maps by region
+	setarray .castles_0$[0],"prtg_cas01","prtg_cas02","prtg_cas03","prtg_cas04","prtg_cas05";
+	setarray .castles_1$[0],"payg_cas01","payg_cas02","payg_cas03","payg_cas04","payg_cas05";
+	setarray .castles_2$[0],"gefg_cas01","gefg_cas02","gefg_cas03","gefg_cas04","gefg_cas05";
+	setarray .castles_3$[0],"aldeg_cas01","aldeg_cas02","aldeg_cas03","aldeg_cas04","aldeg_cas05";
+	setarray .castles_4$[0],"arug_cas01","arug_cas02","arug_cas03","arug_cas04","arug_cas05";
+	setarray .castles_5$[0],"schg_cas01","schg_cas02","schg_cas03","schg_cas04","schg_cas05";
+	setarray .castles_6$[0],"nguild_alde","nguild_gef","nguild_pay","nguild_prt";
+	// Add your custom regions castle maps here.
+
+	// WoE start functions for each castle in each region. Yeah we'll need them.
+	setarray .woe_start_0$[0],"Agit#prtg_cas01::OnAgitStart","Agit#prtg_cas02::OnAgitStart","Agit#prtg_cas03::OnAgitStart","Agit#prtg_cas04::OnAgitStart","Agit#prtg_cas05::OnAgitStart";
+	setarray .woe_start_1$[0],"Agit#payg_cas01::OnAgitStart","Agit#payg_cas02::OnAgitStart","Agit#payg_cas03::OnAgitStart","Agit#payg_cas04::OnAgitStart","Agit#payg_cas05::OnAgitStart";
+	setarray .woe_start_2$[0],"Agit#gefg_cas01::OnAgitStart","Agit#gefg_cas02::OnAgitStart","Agit#gefg_cas03::OnAgitStart","Agit#gefg_cas04::OnAgitStart","Agit#gefg_cas05::OnAgitStart";
+	setarray .woe_start_3$[0],"Agit#aldeg_cas01::OnAgitStart","Agit#aldeg_cas02::OnAgitStart","Agit#aldeg_cas03::OnAgitStart","Agit#aldeg_cas04::OnAgitStart","Agit#aldeg_cas05::OnAgitStart";
+	setarray .woe_start_4$[0],"Manager#arug_cas01::OnAgitStart2","Manager#arug_cas02::OnAgitStart2","Manager#arug_cas03::OnAgitStart2","Manager#arug_cas04::OnAgitStart2","Manager#arug_cas05::OnAgitStart2";
+	setarray .woe_start_5$[0],"Manager#schg_cas01::OnAgitStart2","Manager#schg_cas02::OnAgitStart2","Manager#schg_cas03::OnAgitStart2","Manager#schg_cas04::OnAgitStart2","Manager#schg_cas05::OnAgitStart2";
+	setarray .woe_start_6$[0],"Agit_N01::OnAgitStart","Agit_N02::OnAgitStart","Agit_N03::OnAgitStart","Agit_N04::OnAgitStart";
+	// Add your custom regions start events here.
+
+	// WoE kill functions for each castle in each region
+	setarray .woe_kill_0$[0],"Agit#prtg_cas01::OnAgitEnd","Agit#prtg_cas02::OnAgitEnd","Agit#prtg_cas03::OnAgitEnd","Agit#prtg_cas04::OnAgitEnd","Agit#prtg_cas05::OnAgitEnd";
+	setarray .woe_kill_1$[0],"Agit#payg_cas01::OnAgitEnd","Agit#payg_cas02::OnAgitEnd","Agit#payg_cas03::OnAgitEnd","Agit#payg_cas04::OnAgitEnd","Agit#payg_cas05::OnAgitEnd";
+	setarray .woe_kill_2$[0],"Agit#gefg_cas01::OnAgitEnd","Agit#gefg_cas02::OnAgitEnd","Agit#gefg_cas03::OnAgitEnd","Agit#gefg_cas04::OnAgitEnd","Agit#gefg_cas05::OnAgitEnd";
+	setarray .woe_kill_3$[0],"Agit#aldeg_cas01::OnAgitEnd","Agit#aldeg_cas02::OnAgitEnd","Agit#aldeg_cas03::OnAgitEnd","Agit#aldeg_cas04::OnAgitEnd","Agit#aldeg_cas05::OnAgitEnd";
+	setarray .woe_kill_4$[0],"Manager#arug_cas01::OnAgitEnd2","Manager#arug_cas02::OnAgitEnd2","Manager#arug_cas03::OnAgitEnd2","Manager#arug_cas04::OnAgitEnd2","Manager#arug_cas05::OnAgitEnd2";
+	setarray .woe_kill_5$[0],"Manager#schg_cas01::OnAgitEnd2","Manager#schg_cas02::OnAgitEnd2","Manager#schg_cas03::OnAgitEnd2","Manager#schg_cas04::OnAgitEnd2","Manager#schg_cas05::OnAgitEnd2";
+	setarray .woe_kill_6$[0],"Agit_N01::OnAgitEnd","Agit_N02::OnAgitEnd","Agit_N03::OnAgitEnd","Agit_N04::OnAgitEnd";
+	// Add your custom regions kill events here.
+
+	// Other necessary constants
+	setarray .weekdays$[0], "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday";
+	set .minutes_in_week, 10080;
+	set .minutes_in_day, 1440;
+	
+	set .crash_msg1$, "WoE setter script has a problem! Please repair it ASAP or WoEs may not work properly! Error: ";
+	set .crash_msg2$, "WoE setter script has a critical problem! Please repair it ASAP or WoEs will not work! Error: ";
+	
+
+// End of constants. Next we need some more extra calculations:
+
+	set .num_regions, getarraysize(.regions$);
+	
+	//count num castles per region
+	for(set .@i, 0; .@i < .num_regions; set .@i, .@i + 1) {
+			set .num_castles[.@i], getarraysize(getd(".castles_" + .@i + "$"));
+	}
+	
+	set .active_sessions, 0;
+
+	set .crash, 0; // Reset possible crashes. 1: recoverable crash; 2: critical crash, WoEs will not work.
+	set .crashmes$, ""; // And its respective error message
+
+// Now read and parse all entries in the table
+
+	// Wait, do we have the table installed?
+		if (!query_sql("SHOW TABLES LIKE '" + .table_name$ + "'",.@dummy)){ // .@dummy variable is for discarding warnings
+			// Mark script as crashed and request admin to fix it ASAP! At least unless we're able to fix it by ourselves!
+			set .crash, 2;
+			set .crashmes$, "SQL Table not installed";
+			if (.install_sql) { // Try to make the table
+				// On latest Hercules will halt the script if Ragnarok user has not enough permissions, so crash var will still be active.
+				query_sql("CREATE TABLE IF NOT EXISTS `" + .table_name$ + "` ( `start_day` TINYINT UNSIGNED NOT NULL , `start_hour` TINYINT UNSIGNED NOT NULL , `start_min` TINYINT UNSIGNED NOT NULL , `duration` SMALLINT UNSIGNED NOT NULL , `alive_time` TINYINT UNSIGNED NOT NULL , `prtg` TINYINT UNSIGNED NOT NULL , `payg` TINYINT UNSIGNED NOT NULL , `gefg` TINYINT UNSIGNED NOT NULL , `aldeg` TINYINT UNSIGNED NOT NULL , `arug` TINYINT UNSIGNED NOT NULL , `schg` TINYINT UNSIGNED NOT NULL , `nguild` TINYINT UNSIGNED NOT NULL , PRIMARY KEY (`day`,`start_hour`,`start_min`,`duration` ) ) ENGINE = MYISAM");
+				if (query_sql("SHOW TABLES LIKE '" + .table_name$ + "'",.@tablename$)) // Check if table has actually been made
+					set .crash, 0;
+			}
+//			if (.crash) { // Announce on other emulators?
+//				if (.announce_crash)
+//					announce .crash_msg2$ + .crashmes$, bc_all;
+//				debugmes .crash_msg2$ + .crashmes$;
+//				logmes .crash_msg2$ + .crashmes$;
+//				end;
+//			}
+			set .crashmes, ""; // Delete crash message feedback
+		}
+
+	// 11 columns by default, ordered by WoE time: easier processing
+	// There shouldn't be any problem with this query if table is present, so no error ATM.
+	set .num_sessions, query_sql("SELECT * FROM `" + .table_name$ + "` ORDER BY `start_day`, `start_hour`, `start_min` ASC", .start_day, .start_hour, .start_min, .duration, .alive_time, .prtg, .payg, .gefg, .aldeg, .arug, .schg, .nguild);
+	// Add your custom regions at the end of the query_sql. Try to make them have the same prefixes in the same order as in .regions$
+	
+	// Read all current entries on the table
+		callsub OnLoadParseSessions;
+
+	// TODO continue, what else do I need to do?
+
+	end;
+
+// Reads and parses all WoE entries on request.
+// Also positions the counter on the next WoE and fires previous WoEs if they didn't end and the config is active
+OnLoadParseSessions:
+	
+	set .@verbose, (playerattached() ? 1 : 0); 
+	set .@newcrash, 0; // Used throughout this function
+	set .@launched_woes, 0;
+	set .next_state, -1; // To be set here
+	
+	// @reloadscript resistance. Is WoE active yet? In that case set a special parameter.
+	// This can't be set later because its value may change on the loop.
+	// This will be a special parameter on OnFireWoE that will make all previous WoEs be launched on a "ghost" state.
+	// Don't mind if this ghostly starts WoEs that aren't actually started, it won't do anything.
+	if (agitcheck()) set .@ghost, true;
+	
+	// Process end times and positioning ourselves on the first untriggered date
+	// Also fire WoEs if they should have been fired before the NPC was loaded, if the configuration is enabled
+	freeloop(1);
+	for (set .@i, 0; .@i < .num_sessions; set .@i, .@i + 1) {
+		
+		// TODO add sanity check for the region values (they have to be less than (2^(castles in region) -1) and try to catch duplicate sessions?
+		
+		// Process end time, let's start with the whole days, hours and minutes the WoE will span.
+		set .@mins, .duration[.@i] % 60; // Remainder of the hours
+		set .@hours, (.duration[.@i] / 60) % 24; // We'll strip out the whole days
+		set .@days, .duration[.@i] / .minutes_in_day; // Remember this is a whole division =D
+		
+		// Is the result value in bounds?
+		if ( .duration[.@i] >= .minutes_in_week ) { // More than a week long? Bad guy...
+			// Duration trimming is done when parsing end time
+			set .@newcrash, .@newcrash + 1; // We'll output a count when done parsing
+			set .crash, 1;
+			set .crashmes$, "Woe longer than a week (" + .minutes_in_week + " minutes), will place the end of the WoE at same end time this week.";
+			debugmes .crash_msg1$ + .crashmes$;
+			logmes .crash_msg1$ + .crashmes$;
+			if (.@verbose)
+				mes .crash_msg$ + .crashmes$;
+			if (.announce_crash)
+				announce .crash_msg$ + .crashmes$, bc_all;
+		}
+		// Does this session last 0 minutes? We can't manage that: if so, add a minute:
+			if (.duration[.@i] % .minutes_in_week == 0)
+				set .@mins, .@mins + 1;
+
+		// Add these to our start point = our end point
+		set .end_min[.@i], .start_min[.@i] + .@mins;
+		if (.end_min[.@i] >= 60) { // Result is more than minutes has an hour? No problem!
+			set .@hours, .@hours + 1;
+			set .end_min[.@i], .end_min[.@i] % 60;
+		}
+		set .end_hour[.@i], .start_hour[.@i] + .@hours;
+		if (.end_hour[.@i] >= 24) {
+			set .@days, .@days + 1;
+			set .end_hour[.@i], .end_hour[.@i] % 24;
+		}
+		set .end_day[.@i], .start_day[.@i] + .@days;
+		if (.end_day[.@i] >= 7) {
+			set .end_day[.@i], .end_day[.@i] % 7;
+		}
+		
+		// TODO Add sanitization for checking if there are illegal castle values for region? ie number greater than 2^(max castle in region) -1?
+		
+		// We can do all this from now on just before, but it's better to keep them outside so that the script keeps its readability
+		// If we haven't positioned ourselves yet, is this next WoE to trigger? Nested ifs so that it saves some processing at a given point.
+		// Next session should be at least one minute ahead of us, else don't trigger it
+		if (.next_state < 0)
+			// Remember we've got the sessions ordered by trigger time!
+			if ( .start_day[.@i] >= gettime(4) && .start_hour[.@i] >= gettime(3) && .start_min[.@i] > gettime(2) )
+				set .next_state, .@i;
+				// Loading the NPC and there are no next states left in the week? Then your next state is 0. Will be set out of the loop
+				
+		// Do we have .force_trigger active and should the just parsed WoE have been started? Or should we run a ghost WoE if they were already started?
+		// Idea: if start_time (casted to minutes) + duration is greater than a week -> on a given week, end time is 'before' the start time
+		// Remember duration must be less than a week
+		// Nested ifs so that some processing time is saved in case the feature is disabled
+		if (.force_trigger || .@ghost) {
+			// If equal WoE would end at 00:00 the following week -> Overflow
+			if ( ( (.start_min[.@i] + (.start_hour[.@i] * 60) + (.start_day[.@i] * .minutes_in_day) ) + .duration[.@i] ) < .minutes_in_week ) {
+				// WoE ends "after" its start on the week: Check if it has already been started and not ended
+				if ( (gettime(4) >= .start_day[.@i] && gettime(3) >= .start_hour[.@i] && gettime(2) >= .start_min[.@i])
+					&& (gettime(4) <= .end_day[.@i] && gettime(3) <= .end_hour[.@i] && gettime(2) < .end_min[.@i]) && !.active[.@i] ) {
+					set .@launched_woes, .@launched_woes + 1;
+					callsub OnFireWoE, .@i, 0, .@ghost;
+				}
+					
+			}
+			else { // WoE ends "before" it starts on the week: just check if it hasn't been ended yet or it's after the start
+				if ( ((gettime(4) >= .start_day[.@i] && gettime(3) >= .start_hour[.@i] && gettime(2) >= .start_min[.@i])
+					|| (gettime(4) <= .end_day[.@i] && gettime(3) <= .end_hour[.@i] && gettime(2) < .end_min[.@i])) && !.active[.@i] ) {
+					set .@launched_woes, .@launched_woes + 1;
+					callsub OnFireWoE, .@i, 0, .@ghost;
+				}
+			}
+		}
+	}
+	if (.next_state < 0) set .next_state, 0; // This happens when you load the NPC after the last session has been started, before Sunday.
+
+	freeloop(0);
+	//Output count: Found X woes, no problems parsing X-P WoEs, problems with P
+	if (.@verbose) {
+		mes "[WoE setter]";
+		mes "I've found " + .num_sessions + " WoE sessions.";
+		mes "I've had problems parsing " + .@newcrash + " of them.";
+		if (.force_trigger)
+			mes "I've triggered " + .@launched_woes + " of all parsed ones.";
+		next;
+	}
+	return true;
+
+// Fires a WoE session on the server.
+// Sets WoE mode if not set yet on server and opens the needed castles.
+// Also announces open castles (maybe because it's better than a separate function just for this?)
+// @param getarg(0) index to trigger (required)
+// @param getarg(1) true if wanting to update index. Defaults to false for calls to this label on server start.
+// @param getarg(2) true if starting "ghost" WoE sessions. The session will be marked as started. Used for @reloadscript resistance, for already open castles. Defaults to false.
+OnFireWoE:
+	set .@i, getarg(0,-1); // i, so that we are working on the same session than triggered; indexes will be j and k. Will mark as crashed if no argument is passed.
+	set .@update, getarg(1,false);
+	set .@ghost, getarg(2,false);
+	
+	if (.@i < 0) {
+		set .crash, 1;
+		set .crashmes$, "Illegal call to "+ strnpcinfo(3) +"::OnFireWoE. Missing required argument 0. Skipping session...";
+		debugmes .crash_msg1$ + .crashmes$;
+		logmes .crash_msg1$ + .crashmes$;
+		if (.announce_crash)
+			announce .crash_msg$ + .crashmes$, bc_all;
+		return false;
+	}
+
+	// Check if this session is already active. This error should never be triggered in normal circumstances.
+	if (.active[.@i]) {
+		set .crash, 1;
+		set .crashmes$, "Tried to start an already active session (session " + .@i + "). Skipping session...";
+		debugmes .crash_msg1$ + .crashmes$;
+		logmes .crash_msg1$ + .crashmes$;
+		if (.announce_crash)
+			announce .crash_msg$ + .crashmes$, bc_all;
+		return false;
+	}
+	
+	// Announce start of WoE if enabled
+	if (.announce) 
+		announce "War of Emperium has just begun!",bc_all|bc_woe; 
+	
+	// We could save this check for more code compactness, but that'd harm its speed and readability
+	freeloop(1);
+	if (!agitcheck()) { // agitcheck2() doesn't mind since we're atarting and ending them at the same time
+		agitstart;
+		agitstart2;
+		
+		// No need to check for .@ghost here, since it's false if WoEs haven't started.
+		// Now we have to close all castles that don't belong on this session and mark all open castles
+		for (set .@j, 0; .@j < .num_regions; set .@j, .@j + 1) {
+			for (set .@k, 0; .@k < .num_castles[.@j]; set .@k, .@k + 1) {
+				if ( (getd("." + .regions$[.@j] + "[" + .@i + "]") & (1 << .@k)) ) { // equivalent to: if (.REGIONNAME[.@i] has the bit 2^(.@k)) in 1
+					// Which equally means: If this castle is active for this WoE.
+					// Mark this one as active
+					setd ".woe_count_" + .@j + "$[" + .@k + "]", 1; // The first WoE in these castles
+					
+					if (.announce) { // We need to get castle name and know if it's already occupied prior to announcing
+						set .@castle_map$, getd(".castles_"+ .@j + "$[" + .@k + "]");
+						if (getcastledata(.@castle_map$,1)) {
+							announce "The [" + getcastlename(.@map$) + "] castle of the [" + .region_names$[.@j] + "] region is currently held by the [" + getguildname(getcastledata(.@map$,1)) + "] guild.",bc_all|bc_woe;
+						} else {
+							announce "The [" + getcastlename(.@map$) + "] castle of the [" + .region_names$[.@j] + "] region is currently unoccupied.",bc_all|bc_woe;
+						}
+					}
+					
+				}
+				else { // Closing WoE in all unneeded castles
+					donpcevent getd(".woe_kill_" + .@j + "$[" + .@k + "]");
+				}
+			}
+		}
+		// Mark session as in progress.
+		set .active[.@i], 1;
+		// Start counting Active WoE sessions
+		set .active_sessions, 1;
+	}
+	else { // Start WoEs manually
+		for (set .@j, 0; .@j < .num_regions; set .@j, .@j + 1) {
+			for (set .@k, 0; .@k < .num_castles[.@j]; set .@k, .@k + 1) {
+				if ( (getd("." + .regions$[.@j] + "[" + .@i + "]") & (1 << .@k)) ) { // If castle is marked for this WoE session
+					if ( !getd(".woe_count_" + .@j + "$[" + .@k + "]") && !.@ghost ) { // If this castle is NOT already active and does not come from reloadscript
+						donpcevent getd(".woe_start_" + .@j + "$[" + .@k + "]"); // Starting all needed castles
+						
+						if (.announce) { // We need to get castle name and know if it's already occupied prior to announcing
+							set .@castle_map$, getd(".castles_"+ .@j + "$[" + .@k + "]");
+							if (getcastledata(.@castle_map$,1)) {
+								announce "The [" + getcastlename(.@map$) + "] castle of the [" + .region_names$[.@j] + "] region is currently held by the [" + getguildname(getcastledata(.@map$,1)) + "] guild.",bc_all|bc_woe;
+							} else {
+								announce "The [" + getcastlename(.@map$) + "] castle of the [" + .region_names$[.@j] + "] region is currently unoccupied.",bc_all|bc_woe;
+							}
+						}
+						
+					}
+					setd ".woe_count_" + .@j + "$[" + .@k + "]", getd(".woe_count_" + .@j + "$[" + .@k + "]") + 1; // Number of current WoE sessions in this castle
+				}
+			}
+		}
+		// Mark session as in progress.
+		set .active[.@i], 1;
+		// Increase number of concurrent WoE sessions active
+		set .active_sessions, .active_sessions + 1;
+	}
+	freeloop(0);
+	
+	// Update .next_state if needed. As a security measure, we won't count WoEs launched on server start towards the alive time.
+	if (.@update) {
+			set .next_state, (.@i + 1) % .num_sessions; // Remainder of division by .num_sessions so that it doesn't overflow
+	
+		// .alive_time[.@i] is adjusted on WoE end
+		
+/*
+		// DEVELOPMENT ABANDONED FOR THIS PIECE OF CODE AND SHALL BE REMOVED IF NOT ENOUGH INTEREST IS SHOWN FOR FINAL RELEASE.
+		// Reason: It starts to be resource cost-effective if you have around 40 sessions. You really need that many?
+		// Reasons for continuing this: You really need to activate a castle more than once, have WoEs for more than 1 day, etc?
+
+		// We need to make a .next_close list ordered by close time for performance's sake. We need to loop trough it...
+		set .next_close, -1;
+		set .@endmin_new, .end_min[.@i] + (.end_hour[.@i] * 60) + (.end_day[.@i] * .minutes_in_day); // Take this as a variable change which will save us lots of comparisons
+		for (set .@j, 0; .@j < .active_sessions; set .@j, .@j + 1) { // We try to insert the record
+			if (.next_close == -1) {
+				if (.@j != .@i-1) {
+					set .@endmin, .end_min[.@j] + (.end_hour[.@j] * 60) + (.end_day[.@j] * .minutes_in_day);
+					if ()
+				}
+			
+			}
+			// UNFINISHED!!!
+		}
+*/
+	}
+	
+	// Can't think of anything else to do here.
+	return true;
+
+// Stops a WoE session on the server. All of this could be inside the OnFireWoE label, but that would seriously harm readability just for some space saving
+// Also runs agitend if needed.
+// Announces castles that get closed if said on the config.
+// @param getarg(0) index to trigger (required). If index is set to -1, all WoE sessions will be removed at once.
+// @param getarg(1) true if wanting to update alive time of the WoE. Defaults to true.
+OnStopWoE:
+	set .@i, getarg(0,-2); // i, so that we are working on the same session than triggered; indexes will be j and k. Will mark as crashed if no argument is passed.
+	set .@update, getarg(1,true);
+	
+	if (.@i < -1) {
+		set .crash, 1;
+		set .crashmes$, "Illegal call to "+ strnpcinfo(3) +"::OnStopWoE. Missing required argument 0. Skipping session...";
+		debugmes .crash_msg1$ + .crashmes$;
+		logmes .crash_msg1$ + .crashmes$;
+		if (.announce_crash)
+			announce .crash_msg$ + .crashmes$, bc_all;
+		return false;
+	}
+
+	// Check if this session is not active yet. This error should never be triggered in normal circumstances.
+	if (!.active[.@i]) {
+		set .crash, 1;
+		set .crashmes$, "Tried to stop an already active session (session " + .@i + "). Skipping session...";
+		debugmes .crash_msg1$ + .crashmes$;
+		logmes .crash_msg1$ + .crashmes$;
+		if (.announce_crash)
+			announce .crash_msg$ + .crashmes$, bc_all;
+		return false;
+	}
+	
+	// Announce end of WoE if enabled
+	if (.announce) 
+		announce "War of Emperium has just ended!",bc_all|bc_woe; 
+
+	// Perform different actions based on what we want to stop
+	freeloop(1);
+	if (.@i >= 0) { // End a given session
+		for (set .@j, 0; .@j < .num_regions; set .@j, .@j + 1) {
+			for (set .@k, 0; .@k < .num_castles[.@j]; set .@k, .@k + 1) {
+				if ( (getd("." + .regions$[.@j] + "[" + .@i + "]") & (1 << .@k)) ) { // If castle is marked for this WoE session
+					if ( getd(".woe_count_" + .@j + "$[" + .@k + "]") >= 0 ) { // If this castle is already active
+						setd ".woe_count_" + .@j + "$[" + .@k + "]", getd(".woe_count_" + .@j + "$[" + .@k + "]") - 1; // Number of current WoE sessions in this castle
+						if ( getd(".woe_count_" + .@j + "$[" + .@k + "]") ) { // No more concurrent woes here, close castle
+							donpcevent getd(".woe_kill_" + .@j + "$[" + .@k + "]"); // Stopping all needed castles
+							
+							if (.announce) { // We need to get castle name and know if it's already occupied prior to announcing
+								set .@castle_map$, getd(".castles_"+ .@j + "$[" + .@k + "]");
+								if (getcastledata(.@castle_map$,1)) {
+									announce "The [" + getcastlename(.@map$) + "] castle of the [" + .region_names$[.@j] + "] region is currently held by the [" + getguildname(getcastledata(.@map$,1)) + "] guild.",bc_all|bc_woe;
+								} else {
+									announce "The [" + getcastlename(.@map$) + "] castle of the [" + .region_names$[.@j] + "] region is currently unoccupied.",bc_all|bc_woe;
+								}
+							}
+							
+						}
+					}
+				}
+			}
+		}
+		// Mark session as not in progress.
+		set .active[.@i], 0;
+		// Decrease number of concurrent WoE sessions active
+		set .active_sessions, .active_sessions - 1;
+	}
+	else { // End all sessions. We end them all manuall
+		for (set .@j, 0; .@j < .num_regions; set .@j, .@j + 1) {
+			for (set .@k, 0; .@k < .num_castles[.@j]; set .@k, .@k + 1) {
+				if ( getd(".woe_count_" + .@j + "$[" + .@k + "]") >= 0 ) { // If this castle is already active
+					setd ".woe_count_" + .@j + "$[" + .@k + "]", 0; // Set 0 concurrent WoEs to this castle
+					// donpcevent getd(".woe_kill_" + .@j + "$[" + .@k + "]"); // Stopping castle. Unneeded since we'll issue agitend/agitend2 later.
+					
+					if (.announce) { // We need to get castle name and know if it's already occupied prior to announcing
+						set .@castle_map$, getd(".castles_"+ .@j + "$[" + .@k + "]");
+						if (getcastledata(.@castle_map$,1)) {
+							announce "The [" + getcastlename(.@map$) + "] castle of the [" + .region_names$[.@j] + "] region is currently held by the [" + getguildname(getcastledata(.@map$,1)) + "] guild.",bc_all|bc_woe;
+						} else {
+							announce "The [" + getcastlename(.@map$) + "] castle of the [" + .region_names$[.@j] + "] region is currently unoccupied.",bc_all|bc_woe;
+						}
+						
+					}					
+				}						
+			}
+		}
+		
+		// Set all sessions to inactive: best way is to delete all of the array (or use a cleararray)
+		deletearray .active[0], getarraysize(.active); // Array size is now 0
+		// Set number of concurrent WoE sessions to 0
+		set .active_sessions, 0;
+	}
+	freeloop(0);
+	
+	// If all the .active array is empty, stop the agit
+	if (getarraysize(.active) == 0) {
+		agitend;
+		agitend2;
+	}
+
+	// Update alive time of sessions if required
+
+
+	if (.@update) {
+		if (.alive_time[.@i] > 0) { // Sessions with alive time of 0 remain indefinitely
+			set .alive_time[.@i], .alive_time[.@i] - 1;
+			if (.alive_time[.@i] == 0) { // Delete from the table and server since it has now expired
+				// Unfortunately, there isn't any better way than SQL querying, removing all session data and correcting .next_state if applicable
+				// SQL querying then reload all sessions is also a good solution, but it's less efficient.
+				
+				// Removing the recorded data on the DB. Limit unneeded since that tuple is unique, but just as a security measure.
+				query_sql("DELETE FROM `" + .table_name$ + "` WHERE `start_day` = " + .start_day[.@i] + " AND `start_hour` = " + .start_hour[.@i] + " AND `start_min` = " + .start_min[.@i] + " AND `duration` = " + .duration[.@i] + " LIMIT 1");
+				
+				// Removing the data
+				deletearray .start_day[.@i],1;
+				deletearray .start_hour[.@i],1;
+				deletearray .start_min[.@i],1;
+				deletearray .duration[.@i],1; 
+				deletearray .alive_time[.@i],1;
+				deletearray .prtg[.@i],1;
+				deletearray .payg[.@i],1;
+				deletearray .gefg[.@i],1;
+				deletearray .aldeg[.@i],1;
+				deletearray .arug[.@i],1;
+				deletearray .schg[.@i],1;
+				deletearray .nguild[.@i],1; 
+				// deletearray .YOUR_CUSTOM_REGIONS[.@i], 1; // For your custom regions
+				deletearray .end_day[.@i],1;
+				deletearray .end_hour[.@i],1;
+				deletearray .end_min[.@i],1;
+				// deletearray .active[.@i],1; // Unneeded since this session is stopped at this time?
+				
+				// Update .num_sessions
+				set .num_sessions, .num_sessions - 1;
+				
+				// If this i is less than .next_state, we have to correct next state by substracting 1.
+				// Unsure about if less of equal? That's the case where next WoE should be the one we just deleted, so the following one will take its place by the deletearray
+				if (.@i < .next_state) set .next_state, .next_state - 1;
+			}
+			else { // We have to update the table anyways. Query limited to 1 for security measures.
+				query_sql("UPDATE `" + .table_name$ + "` SET `alive_time` = `alive_time` - 1 WHERE `start_day` = " + .start_day[.@i] + " AND `start_hour` = " + .start_hour[.@i] + " AND `start_min` = " + .start_min[.@i] + " AND `duration` = " + .duration[.@i] + " LIMIT 1");
+			}
+		}
+	}
+
+	return true;
+
+// Uncomment minutes not ending in 0 if you need them. The more active OnMinute labels, the more load for your server.
+// Tip: If you'll only use whole hours or specific minutes, keep the others away.
+OnMinute00: OnMinute10:	OnMinute20:	OnMinute30:	OnMinute40:	OnMinute50:
+// OnMinute01:	OnMinute11:	OnMinute21:	OnMinute31:	OnMinute41:	OnMinute51:
+// OnMinute02:	OnMinute12:	OnMinute22:	OnMinute32:	OnMinute42:	OnMinute52:
+// OnMinute03:	OnMinute13:	OnMinute23:	OnMinute33:	OnMinute43:	OnMinute53:
+// OnMinute04:	OnMinute14:	OnMinute24:	OnMinute34:	OnMinute44:	OnMinute54:
+// OnMinute05:	OnMinute15:	OnMinute25:	OnMinute35:	OnMinute45:	OnMinute55:
+// OnMinute06:	OnMinute16:	OnMinute26:	OnMinute36:	OnMinute46:	OnMinute56:
+// OnMinute07:	OnMinute17:	OnMinute27:	OnMinute37:	OnMinute47:	OnMinute57:
+// OnMinute08:	OnMinute18:	OnMinute28:	OnMinute38:	OnMinute48:	OnMinute58:
+// OnMinute09:	OnMinute19:	OnMinute29:	OnMinute39:	OnMinute49:	OnMinute59:
+
+	// What? We have .next_state, made all the mess with it and won't be using it here? SERIOUSLY?
+	// Yes, since some states may start altogether and we need to loop through all of them for the ending times anyways. It's for showing next session to the users.
+	freeloop(1);
+	for (set .@i, 0; .@i < .num_sessions; set .@i, .@i + 1) {
+		if ( (.start_day[.@i] == gettime(4)) && (.start_hour[.@i] == gettime(3)) && (.start_min[.@i] == gettime(2)) && !.active[.@i] ) {
+		// Launch session if it's time and it's not launched yet.
+			callsub OnFireWoE,.@i,1,0;
+		}
+		if ( (.start_day[.@i] == gettime(4)) && (.start_hour[.@i] == gettime(3)) && (.start_min[.@i] == gettime(2)) && .active[.@i] ) {
+		// Stop session if it's time and is already active.
+			callsub OnStopWoE,.@i,1;
+		}
+	}
+	freeloop(0);
+	
+	// You wanna make the server do anything on a specific time? Make checks here or add your own time labels ;)
+	// It'd be more efficient if you just used the labels you need, but this label cluster can save you some NPCs if you're newbie enough
+	
+	end;
+
+// Debug
+OnWhisperGlobal:
+	if (@whispervar0$ == "init") {
+		dispbottom "Calling OnInit event";
+		callsub OnInit;
+	}
+	else if (@whispervar0$ == "load") {
+		dispbottom "Calling OnLoadParseSessions event";
+		callsub OnLoadParseSessions;
+	}
+	else dispbottom "Only two valid whispering parameters: \"init\" for calling Oninit event; \"load\" for calling OnLoadParseSessions event";
+end;
+}

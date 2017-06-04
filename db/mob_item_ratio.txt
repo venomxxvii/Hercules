@@ -12,6 +12,28 @@
 //  otherwise only listed ones.
 //
 // Examples:
+//IFRIT RINGS
+2678,10000
+2679,10000
+//5 % DROPS MVP
+//4236,30000 // AMONRA
+4403,10000 //KIEL
+4430,10000 // IFRIT
+4408,10000 // Gloom
+4441,10000 //FBH
+4427,50000 // SWORD GUAR
+4399,10000 // THANA
+4407,10000 //Randgris
+4425,10000 //ATROCE
+//LHZ
+4357,10000 //LK
+4359,10000 //SINX
+4361,10000 //WS
+4363,10000 //HP
+4365,10000 //HW
+4367,10000 // SNIPER
+
+
 // 909,100 // Jellopies from monsters will drop with 1x drop rate regardless of global drop rate
 // 909,1000 // Jellopies from monsters will drop with 10x drop rate regardless of global drop rate
 // 909,100,1002 // Jellopies from Porings will drop with 1x drop rate. Other monsters that drop Jellopies are unaffected (use global drop rate).

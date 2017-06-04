@@ -1,0 +1,37 @@
+warcraft,190,181,6	script	Violet Card	4W_M_02,{
+mes "[Event Coins Changer]";
+mes "Hi ^ff8000"+strcharinfo(0)+"^000000, I can exchange your Credit and Violet Cards here.";
+mes "100 Credits = 1 Violet Card";
+mes "1 Violet Card = 100 Credits";
+mes "What would you like to do?";
+next;
+switch(select("Credit to VC","VC to Credit")) {
+
+case 1:
+mes "How many you want to exchange?";
+next;
+input .@count;
+if (.@count == 0) close; // optional: if player enter 0 script will terminate
+if (countitem(20030) < .@count*100) goto L_NE;
+delitem 20030,.@count*100;
+getitem 30151,1;
+close;
+case 2:
+mes "How many you want to exchange?";
+next;
+input .@count;
+if (.@count == 0) close; // optional: if player enter 0 script will terminate
+if (countitem(30151) < .@count*1) goto L_NE;
+delitem 30151,.@count*1;
+getitem 20030,100;
+close;
+}
+
+L_NE:
+mes "You don't have that Credit/Violet Card enough.";
+close;
+}
+
+//DUPLICATES  Violet Card	4W_M_02
+payon,148,217,6	duplicate(Violet Card)	Violet Card#pay	4W_M_02
+morocc,151,85,6	duplicate(Violet Card)	Violet Card#moc	4W_M_02

@@ -64,7 +64,7 @@
 // 20120307 - 2012-03-07aRagexeRE+ - 0x970
 
 #ifndef PACKETVER
-	#define PACKETVER 20141022
+	#define PACKETVER 20100730
 #endif // PACKETVER
 
 //Uncomment the following line if your client is ragexeRE instead of ragexe (required because of conflicting packets in ragexe vs ragexeRE).
@@ -135,7 +135,7 @@
 #define MAX_BANK_ZENY INT_MAX
 
 #ifndef MAX_LEVEL
-#define MAX_LEVEL 175
+#define MAX_LEVEL 1000
 #endif
 #define MAX_FAME 1000000000
 #define MAX_CART 100
@@ -171,7 +171,7 @@
 #define BASE_GUILD_SIZE 16               // Base guild members (without GD_EXTENSION)
 #endif
 #ifndef MAX_GUILD
-#define MAX_GUILD (BASE_GUILD_SIZE+10*6) // Increased max guild members +6 per 1 extension levels [Lupus]
+#define MAX_GUILD (BASE_GUILD_SIZE+10*1) // Increased max guild members +6 per 1 extension levels [Lupus]
 #endif
 #ifndef MAX_GUILDPOSITION
 #define MAX_GUILDPOSITION 20             // Increased max guild positions to accomodate for all members [Valaris] (removed) [PoW]

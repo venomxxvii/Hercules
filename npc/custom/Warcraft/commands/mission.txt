@@ -1,0 +1,8 @@
+-	script	hmission	FAKE_NPC,{
+OnInit:
+	bindatcmd "hmission",strnpcinfo(3)+"::OnAtcommand";
+	end;
+OnAtcommand:
+	atcommand "@warp prt_in 41 113";
+	end;
+}

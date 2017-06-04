@@ -1000,7 +1000,6 @@ void initChangeTables(void)
 	status->dbs->IconChangeTable[SC_MONSTER_TRANSFORM] = SI_MONSTER_TRANSFORM;
 
 	// Costumes
-	status->dbs->IconChangeTable[SC_DRESS_UP] = SI_DRESS_UP;
 	status->dbs->IconChangeTable[SC_MOONSTAR] = SI_MOONSTAR;
 	status->dbs->IconChangeTable[SC_SUPER_STAR] = SI_SUPER_STAR;
 	status->dbs->IconChangeTable[SC_STRANGELIGHTS] = SI_STRANGELIGHTS;
@@ -1179,7 +1178,6 @@ void initChangeTables(void)
 	status->dbs->ChangeFlagTable[SC_MVPCARD_ORCLORD] |= SCB_ALL;
 
 	// Costumes
-	status->dbs->ChangeFlagTable[SC_DRESS_UP] |= SCB_NONE;
 	status->dbs->ChangeFlagTable[SC_MOONSTAR] |= SCB_NONE;
 	status->dbs->ChangeFlagTable[SC_SUPER_STAR] |= SCB_NONE;
 	status->dbs->ChangeFlagTable[SC_STRANGELIGHTS] |= SCB_NONE;
@@ -2402,8 +2400,8 @@ int status_calc_pc_(struct map_session_data* sd, enum e_status_calc_opt opt)
 		bstatus->speed = pSpeed;
 	}
 
-	// FIXME: Most of these stuff should be calculated once, but how do I fix the memset above to do that? [Skotlex]
-	// Give them all modes except these (useful for clones)
+	//FIXME: Most of these stuff should be calculated once, but how do I fix the memset above to do that? [Skotlex]
+	//Give them all modes except these (useful for clones)
 	bstatus->mode = MD_MASK&~(MD_BOSS|MD_PLANT|MD_DETECTOR|MD_ANGRY|MD_TARGETWEAK);
 
 	bstatus->size = ((sd->job & JOBL_BABY) != 0 || (sd->job & MAPID_BASEMASK) == MAPID_SUMMONER)?SZ_SMALL:SZ_MEDIUM;
@@ -2648,39 +2646,6 @@ int status_calc_pc_(struct map_session_data* sd, enum e_status_calc_opt opt)
 			}
 		}
 	}
-	
-	/* parse item options [Smokexyz] */
-	for (i = 0; i < EQI_MAX; i++) {
-		status->current_equip_item_index = index = sd->equip_index[i];
-		status->current_equip_option_index = -1;
-		
-		if (i == EQI_HAND_R && sd->equip_index[EQI_HAND_L] == index)
-			continue;
-		else if (i == EQI_HEAD_MID && sd->equip_index[EQI_HEAD_LOW] == index)
-			continue;
-		else if (i == EQI_HEAD_TOP && (sd->equip_index[EQI_HEAD_MID] == index || sd->equip_index[EQI_HEAD_LOW] == index))
-			continue;
-		
-		if (index >= 0 && sd->inventory_data[index]) {
-			int j = 0;
-			for (j = 0; j < MAX_ITEM_OPTIONS; j++) {
-				int16 option_index = sd->status.inventory[index].option[j].index;
-				struct item_option *ito = NULL;
-				
-				if (option_index == 0 || (ito = itemdb->option_exists(option_index)) == NULL || ito->script == NULL)
-					continue;
-				
-				status->current_equip_option_index = j;
-				script->run(ito->script, 0, sd->bl.id, 0);
-				
-				if (calculating == 0) //Abort, script->run his function. [Skotlex]
-					return 1;
-			}
-		}
-	}
-
-	status->current_equip_option_index = -1;
-	status->current_equip_item_index = -1;
 
 	status->calc_pc_additional(sd, opt);
 
@@ -3103,12 +3068,20 @@ int status_calc_pc_(struct map_session_data* sd, enum e_status_calc_opt opt)
 		sd->left_weapon.addele[ELE_DARK] += skill_lv;
 		sd->magic_addrace[RC_DEMON] += skill_lv;
 		sd->magic_addele[ELE_DARK] += skill_lv;
+		
 #ifdef RENEWAL
 		sd->race_tolerance[RC_DEMON] += skill_lv;
 #else
 		sd->subrace[RC_DEMON] += skill_lv;
 #endif
 		sd->subele[ELE_DARK] += skill_lv;
+	}
+		
+	if(sc && sc->data[SC_SOULLINK] && sc->data[SC_SOULLINK]->val2 == SL_STAR) {
+		sd->right_weapon.addrace[RC_BOSS] += 100;
+		sd->left_weapon.addrace[RC_BOSS] += 100;
+		sd->right_weapon.addele[ELE_HOLY] += 100;
+		sd->left_weapon.addele[ELE_HOLY] += 100;
 	}
 
 	if (sc->count) {
@@ -4697,6 +4670,8 @@ unsigned short status_calc_vit(struct block_list *bl, struct status_change *sc, 
 		vit += sc->data[SC_GLORYWOUNDS]->val1;
 	if(sc->data[SC_TRUESIGHT])
 		vit += 5;
+	if(sc->data[SC_SOULLINK] && (sc->data[SC_SOULLINK]->val2 == SL_WIZARD || sc->data[SC_SOULLINK]->val2 == SL_SAGE))
+		vit += ((TBL_PC*)bl)->status.int_ / 5;
 	if(sc->data[SC_MARIONETTE_MASTER])
 		vit -= sc->data[SC_MARIONETTE_MASTER]->val3&0xFF;
 	if(sc->data[SC_MARIONETTE])
@@ -5410,6 +5385,8 @@ signed short status_calc_flee2(struct block_list *bl, struct status_change *sc, 
 		flee2 += sc->data[SC_PLUSAVOIDVALUE]->val2;
 	if(sc->data[SC_WHISTLE])
 		flee2 += sc->data[SC_WHISTLE]->val3*10;
+	if(sc->data[SC_SOULLINK] && sc->data[SC_SOULLINK]->val2 == SL_STAR)
+		flee2 += 10;
 	if(sc->data[SC__UNLUCKY])
 		flee2 -= flee2 * sc->data[SC__UNLUCKY]->val2 / 100;
 	if (sc->data[SC_FREYJASCROLL])
@@ -6278,6 +6255,8 @@ unsigned int status_calc_maxhp(struct block_list *bl, struct status_change *sc, 
 		maxhp += maxhp * sc->data[SC_GOLDENE_FERSE]->val2 / 100;
 	if (sc->data[SC_FRIGG_SONG])
 		maxhp += maxhp * sc->data[SC_FRIGG_SONG]->val2 / 100;
+	if(sc->data[SC_SOULLINK] && (sc->data[SC_SOULLINK]->val2 == SL_WIZARD || sc->data[SC_SOULLINK]->val2 == SL_SAGE))
+		maxhp += ((TBL_PC*)bl)->status.base_level * 200;
 	if (sc->data[SC_SOULSCROLL])
 		maxhp += maxhp * sc->data[SC_SOULSCROLL]->val1 / 100;
 	if (sc->data[SC_ATKER_ASPD])
@@ -6875,20 +6854,23 @@ void status_set_viewdata(struct block_list *bl, int class_)
 			sd->vd.sex = sd->status.sex;
 
 			if (sd->vd.cloth_color) {
-				if ((sd->sc.option & OPTION_WEDDING) != 0 && battle_config.wedding_ignorepalette == true)
-					sd->vd.cloth_color = 0;
-				if ((sd->sc.option & OPTION_XMAS) != 0 && battle_config.xmas_ignorepalette == true)
-					sd->vd.cloth_color = 0;
-				if ((sd->sc.option & OPTION_SUMMER) != 0 && battle_config.summer_ignorepalette == true)
-					sd->vd.cloth_color = 0;
-				if ((sd->sc.option & OPTION_HANBOK) != 0 && battle_config.hanbok_ignorepalette == true)
-					sd->vd.cloth_color = 0;
-				if ((sd->sc.option & OPTION_OKTOBERFEST) != 0 && battle_config.oktoberfest_ignorepalette == true)
-					sd->vd.cloth_color = 0;
-				if ((sd->sc.option & OPTION_SUMMER2) != 0 && battle_config.summer2_ignorepalette == true)
+				if (sd->sc.option&OPTION_WEDDING && battle_config.wedding_ignorepalette)
+				       sd->vd.cloth_color = 0;
+				if (sd->sc.option&OPTION_XMAS && battle_config.xmas_ignorepalette)
+				       sd->vd.cloth_color = 0;
+				if (sd->sc.option&OPTION_SUMMER && battle_config.summer_ignorepalette)
+				       sd->vd.cloth_color = 0;
+				if (sd->sc.option&OPTION_HANBOK && battle_config.hanbok_ignorepalette)
+				       sd->vd.cloth_color = 0;
+				if (sd->sc.option&OPTION_OKTOBERFEST /* TODO: config? */)
 					sd->vd.cloth_color = 0;
 			}
-			if (sd->vd.body_style != 0 && (sd->sc.option & OPTION_COSTUME) != 0)
+			if (sd->vd.body_style
+			 && (sd->sc.option&OPTION_WEDDING
+			  || sd->sc.option&OPTION_XMAS
+			  || sd->sc.option&OPTION_SUMMER
+			  || sd->sc.option&OPTION_HANBOK
+			  || sd->sc.option&OPTION_OKTOBERFEST))
 				sd->vd.body_style = 0;
 		} else if (vd != NULL) {
 			memcpy(&sd->vd, vd, sizeof(struct view_data));
@@ -7766,6 +7748,30 @@ int status_change_start(struct block_list *src, struct block_list *bl, enum sc_t
 			if (sc->data[SC_FOOD_LUK_CASH] && sc->data[SC_FOOD_LUK_CASH]->val1 > val1)
 				return 0;
 			break;
+		case SC_FOOD_STR_CASH:
+			if (sc->data[SC_FOOD_STR] && sc->data[SC_FOOD_STR]->val1 > val1)
+				return 0;
+			break;
+		case SC_FOOD_AGI_CASH:
+			if (sc->data[SC_FOOD_AGI] && sc->data[SC_FOOD_AGI]->val1 > val1)
+				return 0;
+			break;
+		case SC_FOOD_VIT_CASH:
+			if (sc->data[SC_FOOD_VIT] && sc->data[SC_FOOD_VIT]->val1 > val1)
+				return 0;
+			break;
+		case SC_FOOD_INT_CASH:
+			if (sc->data[SC_FOOD_INT] && sc->data[SC_FOOD_INT]->val1 > val1)
+				return 0;
+			break;
+		case SC_FOOD_DEX_CASH:
+			if (sc->data[SC_FOOD_DEX] && sc->data[SC_FOOD_DEX]->val1 > val1)
+				return 0;
+			break;
+		case SC_FOOD_LUK_CASH:
+			if (sc->data[SC_FOOD_LUK] && sc->data[SC_FOOD_LUK]->val1 > val1)
+				return 0;
+			break;
 		case SC_CAMOUFLAGE:
 			if( sd && pc->checkskill(sd, RA_CAMOUFLAGE) < 3 && !skill->check_camouflage(bl,NULL) )
 				return 0;
@@ -7984,46 +7990,40 @@ int status_change_start(struct block_list *src, struct block_list *bl, enum sc_t
 			status_change_end(bl, SC_INC_AGI, INVALID_TIMER);
 			break;
 		case SC_FOOD_STR:
-			status_change_end(bl, SC_FOOD_STR, INVALID_TIMER);
+			status_change_end(bl, SC_FOOD_STR_CASH, INVALID_TIMER);
 			break;
 		case SC_FOOD_AGI:
-			status_change_end(bl, SC_FOOD_AGI, INVALID_TIMER);
+			status_change_end(bl, SC_FOOD_AGI_CASH, INVALID_TIMER);
 			break;
 		case SC_FOOD_VIT:
-			status_change_end(bl, SC_FOOD_VIT, INVALID_TIMER);
+			status_change_end(bl, SC_FOOD_VIT_CASH, INVALID_TIMER);
 			break;
 		case SC_FOOD_INT:
-			status_change_end(bl, SC_FOOD_INT, INVALID_TIMER);
+			status_change_end(bl, SC_FOOD_INT_CASH, INVALID_TIMER);
 			break;
 		case SC_FOOD_DEX:
-			status_change_end(bl, SC_FOOD_DEX, INVALID_TIMER);
+			status_change_end(bl, SC_FOOD_DEX_CASH, INVALID_TIMER);
 			break;
 		case SC_FOOD_LUK:
-			status_change_end(bl, SC_FOOD_LUK, INVALID_TIMER);
+			status_change_end(bl, SC_FOOD_LUK_CASH, INVALID_TIMER);
 			break;
 		case SC_FOOD_STR_CASH:
 			status_change_end(bl, SC_FOOD_STR, INVALID_TIMER);
-			status_change_end(bl, SC_FOOD_STR_CASH, INVALID_TIMER);
 			break;
 		case SC_FOOD_AGI_CASH:
 			status_change_end(bl, SC_FOOD_AGI, INVALID_TIMER);
-			status_change_end(bl, SC_FOOD_AGI_CASH, INVALID_TIMER);
 			break;
 		case SC_FOOD_VIT_CASH:
 			status_change_end(bl, SC_FOOD_VIT, INVALID_TIMER);
-			status_change_end(bl, SC_FOOD_VIT_CASH, INVALID_TIMER);
 			break;
 		case SC_FOOD_INT_CASH:
 			status_change_end(bl, SC_FOOD_INT, INVALID_TIMER);
-			status_change_end(bl, SC_FOOD_INT_CASH, INVALID_TIMER);
 			break;
 		case SC_FOOD_DEX_CASH:
 			status_change_end(bl, SC_FOOD_DEX, INVALID_TIMER);
-			status_change_end(bl, SC_FOOD_DEX_CASH, INVALID_TIMER);
 			break;
 		case SC_FOOD_LUK_CASH:
 			status_change_end(bl, SC_FOOD_LUK, INVALID_TIMER);
-			status_change_end(bl, SC_FOOD_LUK_CASH, INVALID_TIMER);
 			break;
 		case SC_GM_BATTLE:
 			status_change_end(bl, SC_GM_BATTLE2, INVALID_TIMER);
@@ -8474,10 +8474,8 @@ int status_change_start(struct block_list *src, struct block_list *bl, enum sc_t
 			case SC_SUMMER:
 			case SC_HANBOK:
 			case SC_OKTOBERFEST:
-			case SC_DRESS_UP:
-				if (vd == NULL)
-					return 0;
-				// Store previous values as they could be removed.
+				if (!vd) return 0;
+				//Store previous values as they could be removed.
 				unit->stop_attack(bl);
 				break;
 			case SC_NOCHAT:
@@ -9872,21 +9870,19 @@ int status_change_start(struct block_list *src, struct block_list *bl, enum sc_t
 					return 0;
 				}
 		}
-	} else { // Special considerations when loading SC data.
-		switch (type) {
+	} else { //Special considerations when loading SC data.
+		switch( type ) {
 			case SC_WEDDING:
 			case SC_XMAS:
 			case SC_SUMMER:
 			case SC_HANBOK:
 			case SC_OKTOBERFEST:
-			case SC_DRESS_UP:
-				if (vd == NULL)
-					break;
+				if( !vd ) break;
 				clif->changelook(bl, LOOK_BASE, vd->class);
-				clif->changelook(bl, LOOK_WEAPON, 0);
-				clif->changelook(bl, LOOK_SHIELD, 0);
-				clif->changelook(bl, LOOK_CLOTHES_COLOR, vd->cloth_color);
-				clif->changelook(bl, LOOK_BODY2, 0);
+				clif->changelook(bl,LOOK_WEAPON,0);
+				clif->changelook(bl,LOOK_SHIELD,0);
+				clif->changelook(bl,LOOK_CLOTHES_COLOR,vd->cloth_color);
+				clif->changelook(bl,LOOK_BODY2,0);
 				break;
 			case SC_KAAHI:
 				val4 = INVALID_TIMER;
@@ -10267,10 +10263,6 @@ int status_change_start(struct block_list *src, struct block_list *bl, enum sc_t
 			break;
 		case SC_OKTOBERFEST:
 			sc->option |= OPTION_OKTOBERFEST;
-			opt_flag |= 0x4;
-			break;
-		case SC_DRESS_UP:
-			sc->option |= OPTION_SUMMER2;
 			opt_flag |= 0x4;
 			break;
 		case SC__FEINTBOMB_MASTER:
@@ -11079,10 +11071,6 @@ int status_change_end_(struct block_list* bl, enum sc_type type, int tid, const 
 			break;
 		case SC_OKTOBERFEST:
 			sc->option &= ~OPTION_OKTOBERFEST;
-			opt_flag |= 0x4;
-			break;
-		case SC_DRESS_UP:
-			sc->option &= ~OPTION_SUMMER2;
 			opt_flag |= 0x4;
 			break;
 		case SC__FEINTBOMB_MASTER:

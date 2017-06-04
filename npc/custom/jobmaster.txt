@@ -16,7 +16,7 @@
 //      Baby Novice job change. [Haru]
 //============================================================
 
-prontera,153,193,6	script	Job Master	2_F_MAGICMASTER,{
+warcraft,203,193,5	script	Job Master	2_F_MAGICMASTER,{
 	function Job_Menu; function A_An;
 
 	mes "[Job Master]";
@@ -253,10 +253,27 @@ OnInit:
 	.rebirth_jlevel = 50;    // Minimum base job level to reborn OR change to third class
 	.jobchange_first = 10;   // Minimum job level to turn into 1st class
 	.jobchange_second = 40;  // Minimum job level to turn into 2nd class
-	.third_classes = 1;      // Enable third classes/Extended Classes? (1: yes / 0: no)
+	.third_classes = 0;      // Enable third classes/Extended Classes? (1: yes / 0: no)
 	.supernovice_level = 45; // Minimum base level to turn into Super Novice
 	.linear_jobchange = 1;   // Enforce linear class changes? (1: yes / 0: no)
 	.skill_point_check = 1;  // Force player to use up all skill points? (1: yes / 0: no)
 	.platinum = 1;           // Get platinum skills automatically? (1: yes / 0: no)
 	end;
 }
+
+
+//DUPLICATES  Job Master	2_F_MAGICMASTER
+payon,148,226,6	duplicate(Job Master)	Job Master#pay	2_F_MAGICMASTER
+morocc,162,97,4	duplicate(Job Master)	Job Master#moc	2_F_MAGICMASTER
+alberta,195,147,4	duplicate(Job Master)	Job Master#alb	2_F_MAGICMASTER
+izlude,122,117,6	duplicate(Job Master)	Job Master#iz	2_F_MAGICMASTER
+aldebaran,135,118,6	duplicate(Job Master)	Job Master#alde	2_F_MAGICMASTER
+xmas,153,125,4	duplicate(Job Master)	Job Master#xmas	2_F_MAGICMASTER
+comodo,184,155,6	duplicate(Job Master)	Job Master#com	2_F_MAGICMASTER
+amatsu,202,90,4	duplicate(Job Master)	Job Master#amat2	2_F_MAGICMASTER
+gonryun,153,112,6	duplicate(Job Master)	Job Master#ama	2_F_MAGICMASTER
+umbala,86,152,6	duplicate(Job Master)	Job Master#um	2_F_MAGICMASTER
+louyang,211,46,6	duplicate(Job Master)	Job Master#lou	2_F_MAGICMASTER
+lighthalzen,166,88,6	duplicate(Job Master)	Job Master#lhz	2_F_MAGICMASTER
+hugel,89,146,6	duplicate(Job Master)	Job Master#hug	2_F_MAGICMASTER
+rachel,116,111,6	duplicate(Job Master)	Job Master#rac	2_F_MAGICMASTER

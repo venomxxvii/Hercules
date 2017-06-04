@@ -31,7 +31,7 @@
 //================= Description ===========================================
 //= Enables night mode effects.
 //=========================================================================
-
+dota_mt	mapflag	nightenabled
 alb2trea	mapflag	nightenabled
 alberta	mapflag	nightenabled
 aldebaran	mapflag	nightenabled

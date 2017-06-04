@@ -1,0 +1,64 @@
+warcraft,183,159,3	script	Donation Manager	1_F_SIGNZISK,{
+
+// Pods Item ID and each Pods Costs
+setarray .Pods[1],30260;
+setarray .Cash[1],1;
+
+set @Menu$,"";
+for( set .@a,1; .@a < getarraysize( .Pods ); set .@a,.@a+1 ){
+	set @Menu$,@Menu$ + getitemname( .Pods[.@a] )+":";
+	}
+while( 1 ){	
+	mes "[Coupon Exchanger]";
+	mes "Exchange Rate:";
+	mes "^0000881 Donation Coupon = 1 Donate Point^000000";
+	mes "===============================";
+	mes "To use your Donation Points";
+	mes "Please use our command ^0000FF@donate^000000 to warp you at ^0000FFDonate Shop^000000.";
+	mes "===============================";
+	next;
+	switch( select( "Donation Coupon(s) to Points:Points to Donation Coupon(s)" ) ){
+	case 1:
+			mes "Very well. Here is the list on how much each Donation Coupon is worth:";
+			for( set .@a,1; .@a < getarraysize( .Pods ); set .@a,.@a+1 ){
+				mes "^0000FF"+getitemname( .Pods[.@a] )+" ^FF0000"+.Cash[.@a]+"^000000 Cash Points.";
+				}
+			next;
+			set .@a,select( @Menu$ );
+			mes "Select the Amount of Pod you want to trade into Points.";
+			mes "You have "+countitem( .Pods[.@a] )+" "+getitemname( .Pods[.@a] )+".";
+			input @Amount,0,countitem( .Pods[.@a] );
+			if( @Amount < 1 ){
+			mes "You cancelled.";
+			}else{
+			set #CASHPOINTS,#CASHPOINTS + ( @Amount * .Cash[.@a] );
+			delitem .Pods[.@a],@Amount;
+			mes "Done, you have traded "+@Amount+" "+getitemname(.Pods[.@a])+" into "+( @Amount * .Cash[.@a] )+" Cash Points.";
+			}
+			dispbottom "Total Cash Points: "+#CASHPOINTS;
+			close;
+			break;
+	case 2:
+			mes "Very well. Here is the list on how much each Pod is worth:";
+			for( set .@a,1; .@a < getarraysize( .Pods ); set .@a,.@a+1 ){
+				mes "^0000FF"+getitemname( .Pods[.@a] )+" ^FF0000"+.Cash[.@a]+"^000000 Cash Points.";
+				}
+			next;
+			set .@a,select( @Menu$ );
+			mes "Select the Amount of Cash Points you want to trade into "+getitemname( .Pods[.@a] )+".";
+			mes "You can get maximum of "+#CASHPOINTS/.Cash[.@a]+" "+getitemname( .Pods[.@a] )+".";
+			input @Amount,0,#CASHPOINTS/.Cash[.@a];
+			if( @Amount < 1 ){
+			mes "You cancelled.";
+			}else{
+			set #CASHPOINTS,#CASHPOINTS - ( @Amount * .Cash[.@a] );
+			getitem .Pods[.@a],@Amount;
+			mes "Done, you have traded "+( @Amount * .Cash[.@a] )+" Cash Points into "+@Amount+" of "+getitemname(.Pods[.@a])+" .";
+			}
+			dispbottom "Total Cash Points: "+#CASHPOINTS;
+			close;
+			break;
+		}
+	}
+close;
+}

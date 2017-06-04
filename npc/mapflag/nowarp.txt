@@ -32,10 +32,14 @@
 //================= Description ===========================================
 //= Disables use of @go to a map.
 //=========================================================================
-
+final_dest	mapflag	noteleport
+new_2-2	mapflag	nowarp
+guild_vs2	mapflag	nowarp
+guild_vs4	mapflag	nowarp
+yuno_in01	mapflag	nowarp
+ordeal_3-2	mapflag	nowarp
 // Special Quests Places =====
 ama_test	mapflag	nowarp
-gon_test	mapflag	nowarp
 
 // Guild Castles =============
 aldeg_cas01	mapflag	nowarp

@@ -36,15 +36,7 @@
 1658,Egnigem Cenia,1000000
 1685,Vesper,1000000
 1688,Lady Tanee,1000000
-1708,Thanatos Phantom,1000000
 1719,Detardeurus,1000000
 1734,Kiel D-01,1000000
-1751,Valkyrie Randgris,1000000
-1768,Gloom Under Night,1000000
-1779,Ktullanux,1000000
 1785,Atroce,1000000
-1832,Ifrit,1000000
-1871,Falling Bishop,1000000
-1873,Beelzebub,1000000
-1885,Gopinich,1000000
-2022,Nidhoggur's Shadow,1000000
+1708,Memory of Thanatos,700000

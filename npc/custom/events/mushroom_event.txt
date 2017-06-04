@@ -12,7 +12,7 @@
 //= 3.6a Slightly edited. [Euphy]
 //============================================================
 
-prontera,142,228,6	script	Find the Mushroom	BLACK_MUSHROOM,{
+final_dest,117,26,6	script	Find the Mushroom	BLACK_MUSHROOM,{
 	mes "[ Find The Mushroom ]";
 	if (!.status)
 		mes "There is no event at the moment!";
@@ -30,8 +30,8 @@ prontera,142,228,6	script	Find the Mushroom	BLACK_MUSHROOM,{
 	close;
 
 OnInit:
-	set .Prize,512;	// Reward item ID
-	set .Amount,10;	// Reward item amount
+	set .Prize,7227;	// Reward item ID
+	set .Amount,5;	// Reward item amount
 	set .GM,60;	// GM level required to access NPC
 	setarray .maps$[0],"izlude","geffen","morocc","prontera"; // Possible maps
 	end;
@@ -39,7 +39,7 @@ OnInit:
 OnMinute10:	// Start time (every hour)
 	if (.status) end;
 	set .status,1;
-	set .Spawn,rand(1,10);	// How many Mushrooms should spawn?
+	set .Spawn,rand(8,10);	// How many Mushrooms should spawn?
 	set .Map$,.maps$[rand(getarraysize(.maps$))];
 	killmonster .Map$,"All";
 	monster .Map$,0,0,"Please don't kill me!",1084,.Spawn,strnpcinfo(NPC_NAME)+"::OnMobKilled";

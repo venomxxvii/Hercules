@@ -31,6 +31,30 @@
 //================= Description ===========================================
 //= Prevents PvP mode on a map.
 //=========================================================================
+warcraft	mapflag	pvp	off
+1@cata	mapflag	pvp	off
+2@cata	mapflag	pvp	off
+1@nyd	mapflag	pvp	off
+2@nyd	mapflag	pvp	off
+1@orcs	mapflag	pvp	off
+2@orcs	mapflag	pvp	off
+1@tower	mapflag	pvp	off
+2@tower	mapflag	pvp	off
+3@tower	mapflag	pvp	off
+4@tower	mapflag	pvp	off
+5@tower	mapflag	pvp	off
+6@tower	mapflag	pvp	off
+1@mist	mapflag	pvp	off
+1@cash	mapflag	pvp	off
+1@pump	mapflag	pvp	off
+2@pump	mapflag	pvp	off
+1@lhz	mapflag	pvp	off
+1@ma_h	mapflag	pvp	off
+1@ma_c	mapflag	pvp	off
+1@ma_b	mapflag	pvp	off
+1@ecl	mapflag	pvp	off
+1@spa	mapflag	pvp	off
+1@sara	mapflag	pvp	off
 
 bat_a01	mapflag	pvp	off
 bat_a02	mapflag	pvp	off
@@ -46,6 +70,7 @@ guild_vs3	mapflag	pvp	off
 guild_vs4	mapflag	pvp	off
 guild_vs5	mapflag	pvp	off
 
+warcraft	mapflag	pvp	off
 ayo_in01	mapflag	pvp	off
 ayo_in02	mapflag	pvp	off
 alberta_in	mapflag	pvp	off
